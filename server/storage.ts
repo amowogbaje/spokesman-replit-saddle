@@ -52,6 +52,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    // Add createdAt field which is automatically set in the database
     const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
