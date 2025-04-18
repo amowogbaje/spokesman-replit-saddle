@@ -12,29 +12,26 @@ const iconMap = {
 
 export default function QuickActions() {
   return (
-    <section className="container mx-auto px-4 my-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+    <div className="w-full lg:w-2/5">
+      <div className="space-y-3 lg:pl-4">
         {ACTION_ITEMS.map((item) => {
           const IconComponent = iconMap[item.icon as keyof typeof iconMap];
           
           return (
             <Link key={item.id} href={item.link}>
-              <div className="action-button bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-start space-x-4 hover:shadow-md transition-all cursor-pointer h-full">
-                <div className={`h-12 w-12 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
+              <div className="action-button bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center space-x-4 hover:shadow-md transition-all cursor-pointer">
+                <div className={`h-10 w-10 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
                   {IconComponent && <IconComponent className="h-5 w-5 text-white" />}
                 </div>
-                <div>
-                  <h3 className="font-medium mb-1">{item.title}</h3>
-                  <span className="text-blue-500 inline-flex items-center text-sm">
-                    Learn More
-                    <ChevronRight className="ml-1 h-3 w-3" />
-                  </span>
+                <div className="flex-grow">
+                  <h3 className="font-medium text-sm md:text-base">{item.title}</h3>
                 </div>
+                <ChevronRight className="h-5 w-5 text-gray-400" />
               </div>
             </Link>
           );
         })}
       </div>
-    </section>
+    </div>
   );
 }
