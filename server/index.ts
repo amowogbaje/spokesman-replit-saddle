@@ -2,6 +2,17 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+/**
+ * Saddleback Church Web Application
+ * 
+ * This application serves as a frontend to the Saddleback Church external API.
+ * Instead of using a direct database connection, all data is retrieved from
+ * the external API endpoints defined in the API documentation.
+ * 
+ * The frontend uses an API client to communicate with these external endpoints.
+ * No direct database connection is required.
+ */
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

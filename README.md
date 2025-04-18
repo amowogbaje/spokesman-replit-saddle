@@ -1,81 +1,113 @@
-# Saddleback Church Website - API Integration Guide
+# Saddleback Church Website - External API Integration
 
-This application is a frontend replica of the Saddleback Church website that integrates with an external API for all data needs.
+This application is a frontend replica of the Saddleback Church website that integrates with an external API for all data needs. **No direct database connection is required** - all data is fetched from the documented API endpoints.
 
-## API Documentation
+## Architecture Overview
 
-### Overview
+This application follows a client-server architecture with a clear separation of concerns:
+
+1. **Frontend**: React application that displays data and provides user interaction
+2. **Backend Proxy**: Express server that proxies requests to the external API
+3. **External API**: Third-party service that provides all data (not included in this repo)
+
+## External API Documentation
+
+### API Location
 
 All data for this application comes from the Saddleback Church API, which is hosted at:
 ```
 https://api.saddleback-church.com/v1
 ```
 
-This API uses the following authentication scheme:
+### Authentication Scheme
+
 * Bearer token authentication for protected endpoints
 * No authentication required for public endpoints (locations, events, messages)
 
 ### API Documentation Formats
 
-The API is documented in two formats:
+We provide the API documentation in multiple formats for easy integration:
 
 1. **OpenAPI/Swagger** - Located at `saddleback-api.yaml`
-2. **Detailed JSON** - Located at `api-endpoints.json`
+   * Complete API specification in YAML format
+   * Includes detailed schemas, examples, and error responses
+   
+2. **Postman Collection** - Located at `saddleback-postman-collection.json`
+   * Ready-to-import Postman collection with all endpoints
+   * Includes request examples and response samples
+   
+3. **JSON Reference** - Located at `api-endpoints.json`
+   * Detailed JSON documentation of all endpoints
+   * Useful for code generation and reference
 
-### Importing to Tools
+### Importing Documentation to Tools
 
-#### Importing to Swagger UI
+#### Swagger UI
 
 1. Visit [Swagger Editor](https://editor.swagger.io/)
 2. Click File > Import File
 3. Upload the `saddleback-api.yaml` file
-4. The documentation will render in the UI
+4. The documentation will render in the UI with interactive testing
 
-#### Importing to Postman
+#### Postman
 
 1. Open Postman
 2. Click Import > File
-3. Upload either the `saddleback-api.yaml` or `api-endpoints.json` file
-4. Postman will create a collection with all endpoints
+3. Upload `saddleback-postman-collection.json`
+4. Postman will create a collection with all endpoints ready to use
 
-### Available Endpoints
+### Key API Endpoints
 
-The API provides the following key endpoints:
-
-#### Public Endpoints (No Auth Required)
+#### Public Endpoints
 
 * `GET /locations` - List all church locations
 * `GET /locations/{id_or_slug}` - Get details for a specific location
 * `GET /messages` - List all messages/sermons
 * `GET /messages/latest` - Get the latest message
-* `GET /messages/{id_or_slug}` - Get details for a specific message
 * `GET /events` - List all upcoming events
-* `GET /events/{id_or_slug}` - Get details for a specific event
 * `POST /subscribe` - Subscribe to newsletter
 * `POST /contact` - Send a contact form message
 
-#### Protected Endpoints (Auth Required)
+#### Protected Endpoints
 
 * `POST /auth/login` - Authenticate and get a token
 * `GET /users/{id}` - Get user details
-* `PATCH /users/{id}` - Update user details
 * `POST /users` - Create a new user
 * `POST /event-registrations` - Register for an event
-* `GET /event-registrations/user/{user_id}` - Get all registrations for a user
 
-## Frontend Integration
+## Implementation Details
 
-The frontend integrates with the API using the following approach:
+### Server-Side Integration
 
-1. All API calls are made through the `queryClient.ts` utility
-2. Frontend paths are mapped to API endpoints automatically
-3. API responses are parsed and transformed for the UI
+The server uses a custom API client (`server/db.ts`) that:
 
-### Example API Usage
+1. Makes HTTP requests to the external API
+2. Handles authentication and request formatting
+3. Processes responses and error handling
+4. Provides a clean interface for the rest of the application
 
-Check the `api-examples.js` file for detailed examples of how to interact with each endpoint.
+The `ExternalApiStorage` class (`server/storage.ts`) implements the same interface as the original database storage but fetches data from the API instead.
 
-## Development Notes
+### Frontend Integration
+
+The frontend connects to the backend proxy, which forwards requests to the external API:
+
+1. React components use `useQuery` hooks to fetch data
+2. Loading states and error handling are implemented throughout
+3. Data is processed and transformed for display
+
+### JavaScript API Client Example
+
+Check `api-examples.js` for detailed examples of how to interact with each endpoint using pure JavaScript.
+
+## Development Guide
+
+### Environment Variables
+
+Configure these environment variables to connect to the external API:
+
+* `EXTERNAL_API_URL` - Base URL of the external API (defaults to 'https://api.saddleback-church.com/v1')
+* `EXTERNAL_API_KEY` - API key for authenticated endpoints (optional)
 
 ### Running the Application
 
@@ -84,29 +116,28 @@ Check the `api-examples.js` file for detailed examples of how to interact with e
 npm run dev
 ```
 
-2. The app will load data from the external API
+2. The application will automatically connect to the external API
 
-### Local Testing
+### Local Development
 
-Since the app relies on an external API, you'll need:
+For local development without API access:
 
-* Internet connection to reach the API server
-* Mock service worker (MSW) for local development testing without the API
-* API key for authenticated endpoints (when needed)
+1. Use the mock data in `client/src/lib/constants.ts` as fallback
+2. Consider setting up a mock server using Mock Service Worker (MSW)
+3. Run tests with mock API responses
 
-### Adding New API Features
+### Error Handling
 
-To integrate with a new API endpoint:
+The application implements comprehensive error handling:
 
-1. Add the endpoint to the `ENDPOINT_MAP` in `queryClient.ts`
-2. Create interfaces for the API response data
-3. Use `useQuery` or `useMutation` from React Query to connect to the endpoint
-4. Handle loading, error, and success states
+1. Loading states show during API requests
+2. Error messages display when API calls fail
+3. Fallback to static data when the API is unavailable
+4. Detailed error logging for debugging
 
-### API Error Handling
+## Security Notes
 
-The application handles API errors by:
-
-1. Displaying loading states while requests are in progress
-2. Showing appropriate error messages when API calls fail
-3. Falling back to static data when needed for development
+* API keys should never be committed to the repository
+* All authenticated requests use proper authorization headers
+* HTTPS is used for all API communication
+* Input validation is performed on both client and server
