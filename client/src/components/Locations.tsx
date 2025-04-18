@@ -1,9 +1,50 @@
-import { LOCATIONS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { LOCATIONS } from "@/lib/constants";
+import React from "react";
+import { Location } from "@shared/schema";
 
 export default function Locations() {
+  // Fetch locations from API
+  const { 
+    data: locations, 
+    isLoading, 
+    error 
+  } = useQuery<Location[]>({
+    queryKey: ['/api/locations'],
+  });
+
+  // Process locations by region
+  const locationsByRegion = React.useMemo(() => {
+    if (!locations || !Array.isArray(locations)) return {} as Record<string, Location[]>;
+    
+    return locations.reduce((acc: Record<string, Location[]>, location) => {
+      if (!acc[location.region]) {
+        acc[location.region] = [];
+      }
+      acc[location.region].push(location);
+      return acc;
+    }, {} as Record<string, Location[]>);
+  }, [locations]);
+
+  // Fallback to constants if API data isn't available
+  const displayedLocations = React.useMemo(() => {
+    if (isLoading || error || !locations) {
+      return LOCATIONS;
+    }
+    
+    // Convert database locations to the format needed for display
+    return Object.entries(locationsByRegion).map(([region, locationsList]: [string, Location[]]) => {
+      return {
+        id: region,
+        region: region,
+        places: locationsList.map((loc: Location) => loc.name).join(', ')
+      };
+    });
+  }, [isLoading, error, locations, locationsByRegion]);
+
   return (
     <section className="bg-gray-50 py-16">
       <div className="container mx-auto px-4">
@@ -12,12 +53,26 @@ export default function Locations() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 order-2 lg:order-1">
             {/* Locations by region */}
             <div className="space-y-8">
-              {LOCATIONS.map((location) => (
-                <div key={location.id} className="mb-6 last:mb-0">
-                  <h3 className="text-base font-semibold text-gray-900 mb-3">{location.region}</h3>
-                  <p className="text-gray-600 text-sm">{location.places}</p>
-                </div>
-              ))}
+              {isLoading ? (
+                // Loading skeleton
+                Array(3).fill(0).map((_, index) => (
+                  <div key={index} className="mb-6 last:mb-0 animate-pulse">
+                    <div className="h-4 w-24 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-3 w-40 bg-gray-100 rounded"></div>
+                  </div>
+                ))
+              ) : error ? (
+                // Error state
+                <div className="text-red-500">Unable to load locations</div>
+              ) : (
+                // Display locations
+                displayedLocations.map((location) => (
+                  <div key={location.id} className="mb-6 last:mb-0">
+                    <h3 className="text-base font-semibold text-gray-900 mb-3">{location.region}</h3>
+                    <p className="text-gray-600 text-sm">{location.places}</p>
+                  </div>
+                ))
+              )}
             </div>
             
             {/* World map */}
