@@ -1,16 +1,31 @@
 openapi: 3.0.0
 info:
   title: Saddleback Church API
-  description: API for Saddleback Church website
+  description: |-
+    Official API for the Saddleback Church website. This API provides access to church locations, events, messages, and user management features.
+    
+    ## Authentication
+    Most endpoints are public and don't require authentication. Protected endpoints use Bearer token authentication.
+    
+    ## Rate Limiting
+    Public endpoints: 100 requests per minute
+    Authenticated endpoints: 300 requests per minute
   version: '1.0'
   contact:
     name: Saddleback Church API Team
     email: api@saddleback-church.com
+    url: https://api.saddleback-church.com/docs
+  termsOfService: https://saddleback-church.com/api-terms
+  license:
+    name: Private License
+    url: https://saddleback-church.com/api-license
 servers:
   - url: https://api.saddleback-church.com/v1
     description: Production server
   - url: https://api.staging.saddleback-church.com/v1
     description: Staging server
+  - url: https://api.dev.saddleback-church.com/v1
+    description: Development server
 security:
   - bearerAuth: []
 
@@ -20,6 +35,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: JWT authentication token obtained from /auth/login endpoint
 
   schemas:
     User:
@@ -28,16 +44,86 @@ components:
         id:
           type: integer
           format: int64
+          description: Unique identifier for the user
+          example: 1
         username:
           type: string
+          description: User's username
+          example: johndoe
         email:
           type: string
           format: email
+          description: User's email address
+          example: john@example.com
         name:
           type: string
+          description: User's full name
+          example: John Doe
         created_at:
           type: string
           format: date-time
+          description: When the user account was created
+          example: 2025-04-17T12:00:00Z
+        registered_events_count:
+          type: integer
+          description: Number of events the user is registered for
+          example: 2
+        last_login:
+          type: string
+          format: date-time
+          description: Time of user's last login
+          example: 2025-04-18T09:30:00Z
+      required:
+        - id
+        - username
+        - email
+        - name
+        - created_at
+    
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+          description: User's username
+          example: johndoe
+        password:
+          type: string
+          format: password
+          description: User's password
+          example: SecureP@ssw0rd
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: john@example.com
+        name:
+          type: string
+          description: User's full name
+          example: John Doe
+      required:
+        - username
+        - password
+        - email
+        - name
+    
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's new email address
+          example: john.doe@example.com
+        name:
+          type: string
+          description: User's new full name
+          example: John D. Doe
+        password:
+          type: string
+          format: password
+          description: User's new password
+          example: NewSecureP@ssw0rd
     
     Location:
       type: object
@@ -45,28 +131,142 @@ components:
         id:
           type: integer
           format: int64
+          description: Unique identifier for the location
+          example: 1
         slug:
           type: string
+          description: URL-friendly identifier
+          example: lake-forest
         name:
           type: string
+          description: Location name
+          example: Lake Forest
         address:
           type: string
+          description: Full address
+          example: 1 Saddleback Parkway, Lake Forest, CA 92630
         services:
           type: string
+          description: Service times
+          example: "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM"
         description:
           type: string
           nullable: true
+          description: Location description
+          example: Our Lake Forest campus is where it all began. Join us for worship and community.
         image:
           type: string
           nullable: true
+          description: Image URL
+          example: /assets/lake-forest.jpg
         latitude:
           type: string
           nullable: true
+          description: Latitude coordinate
+          example: "33.647785"
         longitude:
           type: string
           nullable: true
+          description: Longitude coordinate
+          example: "-117.689064"
         region:
           type: string
+          description: Region name
+          example: Orange County
+        upcoming_events:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSummary'
+          description: List of upcoming events at this location
+      required:
+        - id
+        - slug
+        - name
+        - address
+        - services
+        - region
+    
+    LocationCreate:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: URL-friendly identifier
+          example: irvine
+        name:
+          type: string
+          description: Location name
+          example: Irvine
+        address:
+          type: string
+          description: Full address
+          example: 123 Main St, Irvine, CA 92618
+        services:
+          type: string
+          description: Service times
+          example: "Sunday: 9:00AM, 11:00AM"
+        description:
+          type: string
+          description: Location description
+          example: Our newest campus in Irvine.
+        image:
+          type: string
+          description: Image URL
+          example: /assets/irvine.jpg
+        latitude:
+          type: string
+          description: Latitude coordinate
+          example: "33.123456"
+        longitude:
+          type: string
+          description: Longitude coordinate
+          example: "-117.123456"
+        region:
+          type: string
+          description: Region name
+          example: Orange County
+      required:
+        - slug
+        - name
+        - address
+        - services
+        - region
+    
+    LocationUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Updated name
+          example: Lake Forest Main
+        address:
+          type: string
+          description: Updated address
+          example: 1 Saddleback Parkway, Lake Forest, CA 92630
+        services:
+          type: string
+          description: Updated service times
+          example: "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM, 1:00PM"
+        description:
+          type: string
+          description: Updated description
+          example: Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.
+        image:
+          type: string
+          description: Updated image URL
+          example: /assets/lake-forest-new.jpg
+        latitude:
+          type: string
+          description: Updated latitude
+          example: "33.647785"
+        longitude:
+          type: string
+          description: Updated longitude
+          example: "-117.689064"
+        region:
+          type: string
+          description: Updated region
+          example: Orange County
     
     Message:
       type: object
@@ -74,25 +274,147 @@ components:
         id:
           type: integer
           format: int64
+          description: Unique identifier for the message
+          example: 1
         slug:
           type: string
+          description: URL-friendly identifier
+          example: easter-message
         title:
           type: string
+          description: Message title
+          example: Hope Rising - Easter Message
         speaker:
           type: string
+          description: Speaker name
+          example: Rick Warren
         date:
           type: string
+          description: Message date
+          example: April 12, 2025
         image:
           type: string
+          description: Image URL
+          example: /assets/easter-message.jpg
         video_url:
           type: string
           nullable: true
+          description: Video URL
+          example: https://youtu.be/example1
         description:
           type: string
           nullable: true
+          description: Message description
+          example: A powerful Easter message about the hope we have in Christ.
         created_at:
           type: string
           format: date-time
+          description: When the message was created in the system
+          example: 2025-04-10T14:30:00Z
+        related_messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageSummary'
+          description: Related messages
+      required:
+        - id
+        - slug
+        - title
+        - speaker
+        - date
+        - image
+    
+    MessageSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the message
+          example: 2
+        title:
+          type: string
+          description: Message title
+          example: Faith in Action - Faithful Living
+        speaker:
+          type: string
+          description: Speaker name
+          example: Andy Wood
+        date:
+          type: string
+          description: Message date
+          example: April 19, 2025
+      required:
+        - id
+        - title
+        - speaker
+        - date
+    
+    MessageCreate:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: URL-friendly identifier
+          example: power-of-prayer
+        title:
+          type: string
+          description: Message title
+          example: The Power of Prayer
+        speaker:
+          type: string
+          description: Speaker name
+          example: Andy Wood
+        date:
+          type: string
+          description: Message date
+          example: April 25, 2025
+        image:
+          type: string
+          description: Image URL
+          example: /assets/prayer-message.jpg
+        video_url:
+          type: string
+          description: Video URL
+          example: https://youtu.be/example3
+        description:
+          type: string
+          description: Message description
+          example: Learning how prayer can transform your life.
+      required:
+        - slug
+        - title
+        - speaker
+        - date
+        - image
+    
+    MessageUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Updated title
+          example: Hope Rising - Easter 2025
+        speaker:
+          type: string
+          description: Updated speaker
+          example: Rick Warren
+        date:
+          type: string
+          description: Updated date
+          example: April 12, 2025
+        image:
+          type: string
+          description: Updated image URL
+          example: /assets/easter-message-new.jpg
+        video_url:
+          type: string
+          description: Updated video URL
+          example: https://youtu.be/example1-updated
+        description:
+          type: string
+          description: Updated description
+          example: A powerful Easter message about the hope we have in Christ and what it means for our daily lives.
     
     Event:
       type: object
@@ -100,26 +422,184 @@ components:
         id:
           type: integer
           format: int64
+          description: Unique identifier for the event
+          example: 1
         slug:
           type: string
+          description: URL-friendly identifier
+          example: worship-night
         title:
           type: string
+          description: Event title
+          example: Worship Night
         date:
           type: string
+          description: Event date
+          example: May 15, 2025
         time:
           type: string
+          description: Event time
+          example: 7:00 PM
         location:
           type: string
+          description: Event location
+          example: Lake Forest Campus
         description:
           type: string
+          description: Event description
+          example: Join us for a night of worship and prayer.
         image:
           type: string
+          description: Image URL
+          example: /assets/worship-night.jpg
         registration_url:
           type: string
           nullable: true
+          description: Registration URL
+          example: https://register.example.com/worship-night
         created_at:
           type: string
           format: date-time
+          description: When the event was created in the system
+          example: 2025-04-18T14:13:15.495Z
+        registration_count:
+          type: integer
+          description: Number of people registered for the event
+          example: 42
+        location_details:
+          $ref: '#/components/schemas/LocationSummary'
+      required:
+        - id
+        - slug
+        - title
+        - date
+        - time
+        - location
+        - description
+        - image
+    
+    EventSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the event
+          example: 1
+        title:
+          type: string
+          description: Event title
+          example: Worship Night
+        date:
+          type: string
+          description: Event date
+          example: May 15, 2025
+        time:
+          type: string
+          description: Event time
+          example: 7:00 PM
+      required:
+        - id
+        - title
+        - date
+        - time
+    
+    LocationSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the location
+          example: 1
+        name:
+          type: string
+          description: Location name
+          example: Lake Forest
+        address:
+          type: string
+          description: Location address
+          example: 1 Saddleback Parkway, Lake Forest, CA 92630
+      required:
+        - id
+        - name
+        - address
+    
+    EventCreate:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: URL-friendly identifier
+          example: marriage-retreat
+        title:
+          type: string
+          description: Event title
+          example: Marriage Retreat
+        date:
+          type: string
+          description: Event date
+          example: June 20-22, 2025
+        time:
+          type: string
+          description: Event time
+          example: Friday 6:00 PM - Sunday 12:00 PM
+        location:
+          type: string
+          description: Event location
+          example: Lake Forest Campus
+        description:
+          type: string
+          description: Event description
+          example: A weekend retreat for married couples.
+        image:
+          type: string
+          description: Image URL
+          example: /assets/marriage-retreat.jpg
+        registration_url:
+          type: string
+          description: Registration URL
+          example: https://register.example.com/marriage-retreat
+      required:
+        - slug
+        - title
+        - date
+        - time
+        - location
+        - description
+        - image
+    
+    EventUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Updated title
+          example: Worship Night Celebration
+        date:
+          type: string
+          description: Updated date
+          example: May 15, 2025
+        time:
+          type: string
+          description: Updated time
+          example: 7:30 PM
+        location:
+          type: string
+          description: Updated location
+          example: Lake Forest Campus
+        description:
+          type: string
+          description: Updated description
+          example: Join us for a night of worship, prayer, and community.
+        image:
+          type: string
+          description: Updated image URL
+          example: /assets/worship-night-new.jpg
+        registration_url:
+          type: string
+          description: Updated registration URL
+          example: https://register.example.com/worship-night-updated
     
     EventRegistration:
       type: object
@@ -127,32 +607,259 @@ components:
         id:
           type: integer
           format: int64
+          description: Unique identifier for the registration
+          example: 1
         event_id:
           type: integer
           format: int64
+          description: Event ID
+          example: 1
         user_id:
           type: integer
           format: int64
+          description: User ID
+          example: 1
         registered_at:
           type: string
           format: date-time
+          description: When the registration was created
+          example: 2025-04-18T14:13:31.880Z
         attended:
           type: boolean
-          default: false
+          description: Whether the person attended the event
+          example: false
         number_of_guests:
           type: integer
-          default: 1
+          description: Number of guests
+          example: 2
         special_requests:
           type: string
           nullable: true
+          description: Special requests
+          example: Need accessible seating
+        event:
+          $ref: '#/components/schemas/EventSummary'
+        user:
+          $ref: '#/components/schemas/UserSummary'
+      required:
+        - id
+        - event_id
+        - user_id
+        - registered_at
+        - attended
+        - number_of_guests
+    
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: User ID
+          example: 1
+        name:
+          type: string
+          description: User's full name
+          example: John Doe
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: john@example.com
+        phone:
+          type: string
+          nullable: true
+          description: User's phone number
+          example: 555-123-4567
+      required:
+        - id
+        - name
+        - email
+    
+    EventRegistrationCreate:
+      type: object
+      properties:
+        event_id:
+          type: integer
+          format: int64
+          description: Event ID
+          example: 1
+        first_name:
+          type: string
+          description: First name
+          example: John
+        last_name:
+          type: string
+          description: Last name
+          example: Doe
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: john@example.com
+        phone:
+          type: string
+          description: Phone number
+          example: 555-123-4567
+        number_of_guests:
+          type: integer
+          description: Number of guests
+          example: 2
+        special_requests:
+          type: string
+          description: Special requests
+          example: Need accessible seating
+      required:
+        - event_id
+        - first_name
+        - last_name
+        - email
+    
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username
+          example: johndoe
+        password:
+          type: string
+          format: password
+          description: Password
+          example: SecureP@ssw0rd
+      required:
+        - username
+        - password
+    
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjE2MTcyODAwLCJleHAiOjE2MTYyNTkyMDB9.6UYMgRgXQNGFgJZ-9k-C3Jy6k0ZuluqUKGP0g2F8CxQ
+        expires_at:
+          type: string
+          format: date-time
+          description: Token expiration time
+          example: 2025-05-17T12:00:00Z
+        user:
+          $ref: '#/components/schemas/UserSummary'
+      required:
+        - token
+        - expires_at
+        - user
+    
+    SubscriptionRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: john@example.com
+        first_name:
+          type: string
+          description: First name
+          example: John
+        last_name:
+          type: string
+          description: Last name
+          example: Doe
+        interests:
+          type: array
+          items:
+            type: string
+            enum: [general, events, groups, volunteer]
+          description: Subscription interests
+          example: [general, events, groups]
+      required:
+        - email
+    
+    SubscriptionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: Subscription successful
+        subscription_id:
+          type: string
+          description: Subscription ID
+          example: sub_123456
+        email:
+          type: string
+          format: email
+          description: Subscribed email
+          example: john@example.com
+      required:
+        - message
+        - subscription_id
+    
+    ContactRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Full name
+          example: John Doe
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: john@example.com
+        phone:
+          type: string
+          description: Phone number
+          example: 555-123-4567
+        subject:
+          type: string
+          description: Message subject
+          example: Question about worship services
+        message:
+          type: string
+          description: Message content
+          example: I'm new to the area and would like to know more about your worship services. What should I expect when I visit?
+        department:
+          type: string
+          description: Department to contact
+          example: General Inquiries
+      required:
+        - name
+        - email
+        - subject
+        - message
+    
+    ContactResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: Contact form submitted successfully
+        reference_id:
+          type: string
+          description: Reference ID
+          example: ref_123456
+        expected_response_time:
+          type: string
+          description: Expected response time
+          example: within 24 hours
+      required:
+        - message
+        - reference_id
     
     Error:
       type: object
       properties:
         error:
           type: string
+          description: Error type
+          example: Validation Error
         message:
           type: string
+          description: Error message
+          example: Invalid request data
         details:
           type: array
           items:
@@ -160,13 +867,328 @@ components:
             properties:
               field:
                 type: string
+                description: Field with error
+                example: username
               message:
                 type: string
+                description: Error message for field
+                example: Username already exists
+          description: Error details
+      required:
+        - error
+        - message
 
 paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate a user and get access token
+      description: |-
+        Authenticates a user with username and password and returns a JWT token.
+        This token is required for all protected endpoints.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              login:
+                value:
+                  username: johndoe
+                  password: SecureP@ssw0rd
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                login:
+                  value:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjE2MTcyODAwLCJleHAiOjE2MTYyNTkyMDB9.6UYMgRgXQNGFgJZ-9k-C3Jy6k0ZuluqUKGP0g2F8CxQ
+                    expires_at: 2025-05-17T12:00:00Z
+                    user:
+                      id: 1
+                      name: John Doe
+                      email: john@example.com
+        '401':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                login_failed:
+                  value:
+                    error: Authentication Failed
+                    message: Invalid username or password
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: List all users (admin only)
+      description: Returns a paginated list of all users. Restricted to admin users.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of users to return per page
+          example: 10
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Pagination offset
+          example: 0
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search term to filter users by name or email
+          example: john
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total:
+                    type: integer
+                    description: Total number of users matching criteria
+                    example: 100
+                  limit:
+                    type: integer
+                    description: Limit used in query
+                    example: 10
+                  offset:
+                    type: integer
+                    description: Offset used in query
+                    example: 0
+                required:
+                  - users
+                  - total
+                  - limit
+                  - offset
+              examples:
+                users:
+                  value:
+                    users:
+                      - id: 1
+                        username: johndoe
+                        email: john@example.com
+                        name: John Doe
+                        created_at: 2025-04-17T12:00:00Z
+                      - id: 2
+                        username: janedoe
+                        email: jane@example.com
+                        name: Jane Doe
+                        created_at: 2025-04-16T14:30:00Z
+                    total: 100
+                    limit: 10
+                    offset: 0
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                unauthorized:
+                  value:
+                    error: Unauthorized
+                    message: Authentication required
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: Insufficient permissions
+    post:
+      tags:
+        - Users
+      summary: Create a new user account
+      description: Creates a new user account with the provided details.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+            examples:
+              create_user:
+                value:
+                  username: johndoe
+                  password: SecureP@ssw0rd
+                  email: john@example.com
+                  name: John Doe
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                user:
+                  value:
+                    id: 1
+                    username: johndoe
+                    email: john@example.com
+                    name: John Doe
+                    created_at: 2025-04-17T12:00:00Z
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: username
+                        message: Username already exists
+                      - field: password
+                        message: Password must be at least 8 characters
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user details by ID
+      description: Returns detailed information about a specific user.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: User ID
+          example: 1
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                user:
+                  value:
+                    id: 1
+                    username: johndoe
+                    email: john@example.com
+                    name: John Doe
+                    created_at: 2025-04-17T12:00:00Z
+                    registered_events_count: 2
+                    last_login: 2025-04-18T09:30:00Z
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: User not found
+    patch:
+      tags:
+        - Users
+      summary: Update user details
+      description: Updates user information such as email, name, or password.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: User ID
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+            examples:
+              update_user:
+                value:
+                  email: john.doe@example.com
+                  name: John D. Doe
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                user:
+                  value:
+                    id: 1
+                    username: johndoe
+                    email: john.doe@example.com
+                    name: John D. Doe
+                    created_at: 2025-04-17T12:00:00Z
+                    updated_at: 2025-04-18T12:00:00Z
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: email
+                        message: Invalid email format
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: User not found
+
   /locations:
     get:
+      tags:
+        - Locations
       summary: List all church locations
+      description: Returns a list of all church locations with their details.
       security: []
       parameters:
         - in: query
@@ -174,18 +1196,21 @@ paths:
           schema:
             type: string
           description: Filter by region
+          example: Orange County
         - in: query
           name: limit
           schema:
             type: integer
             default: 10
           description: Number of locations to return per page
+          example: 10
         - in: query
           name: offset
           schema:
             type: integer
             default: 0
           description: Pagination offset
+          example: 0
       responses:
         '200':
           description: List of locations
@@ -195,41 +1220,52 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Location'
+              examples:
+                locations:
+                  value:
+                    - id: 1
+                      slug: lake-forest
+                      name: Lake Forest
+                      address: 1 Saddleback Parkway, Lake Forest, CA 92630
+                      services: "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM"
+                      description: Our Lake Forest campus is where it all began. Join us for worship and community.
+                      image: /assets/lake-forest.jpg
+                      latitude: "33.647785"
+                      longitude: "-117.689064"
+                      region: Orange County
+                    - id: 2
+                      slug: anaheim
+                      name: Anaheim
+                      address: 131 E Katella Ave, Anaheim, CA 92802
+                      services: "Sunday: 9:00AM, 11:00AM"
+                      description: Located in the heart of Anaheim, our campus offers a welcoming environment for all.
+                      image: /assets/anaheim.jpg
+                      latitude: "33.803219"
+                      longitude: "-117.911433"
+                      region: Orange County
     post:
-      summary: Create a new location
-      security:
-        - bearerAuth: []
+      tags:
+        - Locations
+      summary: Create a new location (admin only)
+      description: Creates a new church location with the provided details.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - slug
-                - name
-                - address
-                - services
-                - region
-              properties:
-                slug:
-                  type: string
-                name:
-                  type: string
-                address:
-                  type: string
-                services:
-                  type: string
-                description:
-                  type: string
-                image:
-                  type: string
-                latitude:
-                  type: string
-                longitude:
-                  type: string
-                region:
-                  type: string
+              $ref: '#/components/schemas/LocationCreate'
+            examples:
+              create_location:
+                value:
+                  slug: irvine
+                  name: Irvine
+                  address: 123 Main St, Irvine, CA 92618
+                  services: "Sunday: 9:00AM, 11:00AM"
+                  description: Our newest campus in Irvine.
+                  image: /assets/irvine.jpg
+                  latitude: "33.123456"
+                  longitude: "-117.123456"
+                  region: Orange County
       responses:
         '201':
           description: Location created
@@ -237,22 +1273,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location'
+              examples:
+                location:
+                  value:
+                    id: 3
+                    slug: irvine
+                    name: Irvine
+                    address: 123 Main St, Irvine, CA 92618
+                    services: "Sunday: 9:00AM, 11:00AM"
+                    description: Our newest campus in Irvine.
+                    image: /assets/irvine.jpg
+                    latitude: "33.123456"
+                    longitude: "-117.123456"
+                    region: Orange County
         '400':
           description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: slug
+                        message: Location slug already exists
         '403':
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: Insufficient permissions
 
   /locations/{id_or_slug}:
     get:
-      summary: Get location details
+      tags:
+        - Locations
+      summary: Get location details by ID or slug
+      description: Returns detailed information about a specific location.
       security: []
       parameters:
         - in: path
@@ -261,6 +1326,7 @@ paths:
           schema:
             type: string
           description: Location ID or slug
+          example: lake-forest
       responses:
         '200':
           description: Location details
@@ -268,16 +1334,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location'
+              examples:
+                location:
+                  value:
+                    id: 1
+                    slug: lake-forest
+                    name: Lake Forest
+                    address: 1 Saddleback Parkway, Lake Forest, CA 92630
+                    services: "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM"
+                    description: Our Lake Forest campus is where it all began. Join us for worship and community.
+                    image: /assets/lake-forest.jpg
+                    latitude: "33.647785"
+                    longitude: "-117.689064"
+                    region: Orange County
+                    upcoming_events:
+                      - id: 1
+                        title: Worship Night
+                        date: May 15, 2025
+                        time: 7:00 PM
         '404':
           description: Location not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Location not found
     patch:
-      summary: Update location details
-      security:
-        - bearerAuth: []
+      tags:
+        - Locations
+      summary: Update location details (admin only)
+      description: Updates information about a specific location.
       parameters:
         - in: path
           name: id_or_slug
@@ -285,29 +1375,18 @@ paths:
           schema:
             type: string
           description: Location ID or slug
+          example: lake-forest
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                address:
-                  type: string
-                services:
-                  type: string
-                description:
-                  type: string
-                image:
-                  type: string
-                latitude:
-                  type: string
-                longitude:
-                  type: string
-                region:
-                  type: string
+              $ref: '#/components/schemas/LocationUpdate'
+            examples:
+              update_location:
+                value:
+                  services: "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM, 1:00PM"
+                  description: Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.
       responses:
         '200':
           description: Location updated
@@ -315,6 +1394,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Location'
+              examples:
+                location:
+                  value:
+                    id: 1
+                    slug: lake-forest
+                    name: Lake Forest
+                    address: 1 Saddleback Parkway, Lake Forest, CA 92630
+                    services: "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM, 1:00PM"
+                    description: Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.
+                    image: /assets/lake-forest.jpg
+                    latitude: "33.647785"
+                    longitude: "-117.689064"
+                    region: Orange County
         '400':
           description: Validation error
           content:
@@ -327,16 +1419,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: Insufficient permissions
         '404':
           description: Location not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Location not found
 
   /messages:
     get:
+      tags:
+        - Messages
       summary: List all messages/sermons
+      description: Returns a list of all messages/sermons with optional filtering.
       security: []
       parameters:
         - in: query
@@ -344,18 +1449,21 @@ paths:
           schema:
             type: string
           description: Filter by speaker name
+          example: Rick Warren
         - in: query
           name: limit
           schema:
             type: integer
             default: 10
           description: Number of messages to return per page
+          example: 10
         - in: query
           name: offset
           schema:
             type: integer
             default: 0
           description: Pagination offset
+          example: 0
         - in: query
           name: sort
           schema:
@@ -363,6 +1471,7 @@ paths:
             enum: [date_desc, date_asc]
             default: date_desc
           description: Sort order
+          example: date_desc
       responses:
         '200':
           description: List of messages
@@ -372,37 +1481,46 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Message'
+              examples:
+                messages:
+                  value:
+                    - id: 2
+                      slug: faithful-living
+                      title: Faith in Action - Faithful Living
+                      speaker: Andy Wood
+                      date: April 19, 2025
+                      image: /assets/faithful-living.jpg
+                      video_url: https://youtu.be/example2
+                      description: Learning how to put our faith into practice in everyday life.
+                    - id: 1
+                      slug: easter-message
+                      title: Hope Rising - Easter Message
+                      speaker: Rick Warren
+                      date: April 12, 2025
+                      image: /assets/easter-message.jpg
+                      video_url: https://youtu.be/example1
+                      description: A powerful Easter message about the hope we have in Christ.
     post:
-      summary: Create a new message
-      security:
-        - bearerAuth: []
+      tags:
+        - Messages
+      summary: Create a new message (admin only)
+      description: Creates a new message/sermon with the provided details.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - slug
-                - title
-                - speaker
-                - date
-                - image
-              properties:
-                slug:
-                  type: string
-                title:
-                  type: string
-                speaker:
-                  type: string
-                date:
-                  type: string
-                image:
-                  type: string
-                video_url:
-                  type: string
-                description:
-                  type: string
+              $ref: '#/components/schemas/MessageCreate'
+            examples:
+              create_message:
+                value:
+                  slug: power-of-prayer
+                  title: The Power of Prayer
+                  speaker: Andy Wood
+                  date: April 25, 2025
+                  image: /assets/prayer-message.jpg
+                  video_url: https://youtu.be/example3
+                  description: Learning how prayer can transform your life.
       responses:
         '201':
           description: Message created
@@ -410,8 +1528,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+              examples:
+                message:
+                  value:
+                    id: 3
+                    slug: power-of-prayer
+                    title: The Power of Prayer
+                    speaker: Andy Wood
+                    date: April 25, 2025
+                    image: /assets/prayer-message.jpg
+                    video_url: https://youtu.be/example3
+                    description: Learning how prayer can transform your life.
+                    created_at: 2025-04-18T15:30:00Z
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: slug
+                        message: Message slug already exists
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -419,7 +1563,10 @@ paths:
   
   /messages/latest:
     get:
+      tags:
+        - Messages
       summary: Get the latest message
+      description: Returns the most recent message/sermon.
       security: []
       responses:
         '200':
@@ -428,16 +1575,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+              examples:
+                message:
+                  value:
+                    id: 2
+                    slug: faithful-living
+                    title: Faith in Action - Faithful Living
+                    speaker: Andy Wood
+                    date: April 19, 2025
+                    image: /assets/faithful-living.jpg
+                    video_url: https://youtu.be/example2
+                    description: Learning how to put our faith into practice in everyday life.
+                    created_at: 2025-04-17T10:15:00Z
         '404':
           description: No messages found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: No messages found
 
   /messages/{id_or_slug}:
     get:
-      summary: Get message details
+      tags:
+        - Messages
+      summary: Get message details by ID or slug
+      description: Returns detailed information about a specific message.
       security: []
       parameters:
         - in: path
@@ -446,6 +1613,7 @@ paths:
           schema:
             type: string
           description: Message ID or slug
+          example: easter-message
       responses:
         '200':
           description: Message details
@@ -453,16 +1621,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+              examples:
+                message:
+                  value:
+                    id: 1
+                    slug: easter-message
+                    title: Hope Rising - Easter Message
+                    speaker: Rick Warren
+                    date: April 12, 2025
+                    image: /assets/easter-message.jpg
+                    video_url: https://youtu.be/example1
+                    description: A powerful Easter message about the hope we have in Christ.
+                    created_at: 2025-04-10T14:30:00Z
+                    related_messages:
+                      - id: 2
+                        title: Faith in Action - Faithful Living
+                        speaker: Andy Wood
+                        date: April 19, 2025
         '404':
           description: Message not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Message not found
     patch:
-      summary: Update message details
-      security:
-        - bearerAuth: []
+      tags:
+        - Messages
+      summary: Update message details (admin only)
+      description: Updates information about a specific message.
       parameters:
         - in: path
           name: id_or_slug
@@ -470,25 +1661,18 @@ paths:
           schema:
             type: string
           description: Message ID or slug
+          example: easter-message
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                speaker:
-                  type: string
-                date:
-                  type: string
-                image:
-                  type: string
-                video_url:
-                  type: string
-                description:
-                  type: string
+              $ref: '#/components/schemas/MessageUpdate'
+            examples:
+              update_message:
+                value:
+                  title: Hope Rising - Easter 2025
+                  description: A powerful Easter message about the hope we have in Christ and what it means for our daily lives.
       responses:
         '200':
           description: Message updated
@@ -496,8 +1680,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Message'
+              examples:
+                message:
+                  value:
+                    id: 1
+                    slug: easter-message
+                    title: Hope Rising - Easter 2025
+                    speaker: Rick Warren
+                    date: April 12, 2025
+                    image: /assets/easter-message.jpg
+                    video_url: https://youtu.be/example1
+                    description: A powerful Easter message about the hope we have in Christ and what it means for our daily lives.
+                    updated_at: 2025-04-18T16:45:00Z
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -508,10 +1710,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Message not found
 
   /events:
     get:
+      tags:
+        - Events
       summary: List all events
+      description: Returns a list of all events with optional filtering.
       security: []
       parameters:
         - in: query
@@ -519,30 +1729,35 @@ paths:
           schema:
             type: string
             format: date
-          description: Filter events from this date
+          description: Filter events from this date (YYYY-MM-DD)
+          example: 2025-05-01
         - in: query
           name: date_to
           schema:
             type: string
             format: date
-          description: Filter events until this date
+          description: Filter events until this date (YYYY-MM-DD)
+          example: 2025-06-30
         - in: query
           name: location
           schema:
             type: string
           description: Filter by location name or ID
+          example: Lake Forest
         - in: query
           name: limit
           schema:
             type: integer
             default: 10
           description: Number of events to return per page
+          example: 10
         - in: query
           name: offset
           schema:
             type: integer
             default: 0
           description: Pagination offset
+          example: 0
       responses:
         '200':
           description: List of events
@@ -552,41 +1767,51 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Event'
+              examples:
+                events:
+                  value:
+                    - id: 1
+                      slug: worship-night
+                      title: Worship Night
+                      date: May 15, 2025
+                      time: 7:00 PM
+                      location: Lake Forest Campus
+                      description: Join us for a night of worship and prayer.
+                      image: /assets/worship-night.jpg
+                      registration_url: https://register.example.com/worship-night
+                      created_at: 2025-04-18T14:13:15.495Z
+                    - id: 2
+                      slug: youth-conference
+                      title: Youth Conference 2025
+                      date: June 10-12, 2025
+                      time: 9:00 AM - 4:00 PM
+                      location: Anaheim Campus
+                      description: A three-day conference for high school students to grow in their faith.
+                      image: /assets/youth-conference.jpg
+                      registration_url: https://register.example.com/youth-conference
+                      created_at: 2025-04-18T14:13:27.574Z
     post:
-      summary: Create a new event
-      security:
-        - bearerAuth: []
+      tags:
+        - Events
+      summary: Create a new event (admin only)
+      description: Creates a new event with the provided details.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - slug
-                - title
-                - date
-                - time
-                - location
-                - description
-                - image
-              properties:
-                slug:
-                  type: string
-                title:
-                  type: string
-                date:
-                  type: string
-                time:
-                  type: string
-                location:
-                  type: string
-                description:
-                  type: string
-                image:
-                  type: string
-                registration_url:
-                  type: string
+              $ref: '#/components/schemas/EventCreate'
+            examples:
+              create_event:
+                value:
+                  slug: marriage-retreat
+                  title: Marriage Retreat
+                  date: June 20-22, 2025
+                  time: Friday 6:00 PM - Sunday 12:00 PM
+                  location: Lake Forest Campus
+                  description: A weekend retreat for married couples.
+                  image: /assets/marriage-retreat.jpg
+                  registration_url: https://register.example.com/marriage-retreat
       responses:
         '201':
           description: Event created
@@ -594,8 +1819,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
+              examples:
+                event:
+                  value:
+                    id: 3
+                    slug: marriage-retreat
+                    title: Marriage Retreat
+                    date: June 20-22, 2025
+                    time: Friday 6:00 PM - Sunday 12:00 PM
+                    location: Lake Forest Campus
+                    description: A weekend retreat for married couples.
+                    image: /assets/marriage-retreat.jpg
+                    registration_url: https://register.example.com/marriage-retreat
+                    created_at: 2025-04-19T09:30:00Z
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: slug
+                        message: Event slug already exists
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -603,7 +1855,10 @@ paths:
 
   /events/{id_or_slug}:
     get:
-      summary: Get event details
+      tags:
+        - Events
+      summary: Get event details by ID or slug
+      description: Returns detailed information about a specific event.
       security: []
       parameters:
         - in: path
@@ -612,6 +1867,7 @@ paths:
           schema:
             type: string
           description: Event ID or slug
+          example: worship-night
       responses:
         '200':
           description: Event details
@@ -619,16 +1875,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
+              examples:
+                event:
+                  value:
+                    id: 1
+                    slug: worship-night
+                    title: Worship Night
+                    date: May 15, 2025
+                    time: 7:00 PM
+                    location: Lake Forest Campus
+                    description: Join us for a night of worship and prayer.
+                    image: /assets/worship-night.jpg
+                    registration_url: https://register.example.com/worship-night
+                    created_at: 2025-04-18T14:13:15.495Z
+                    registration_count: 42
+                    location_details:
+                      id: 1
+                      name: Lake Forest
+                      address: 1 Saddleback Parkway, Lake Forest, CA 92630
         '404':
           description: Event not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Event not found
     patch:
-      summary: Update event details
-      security:
-        - bearerAuth: []
+      tags:
+        - Events
+      summary: Update event details (admin only)
+      description: Updates information about a specific event.
       parameters:
         - in: path
           name: id_or_slug
@@ -636,27 +1916,19 @@ paths:
           schema:
             type: string
           description: Event ID or slug
+          example: worship-night
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                date:
-                  type: string
-                time:
-                  type: string
-                location:
-                  type: string
-                description:
-                  type: string
-                image:
-                  type: string
-                registration_url:
-                  type: string
+              $ref: '#/components/schemas/EventUpdate'
+            examples:
+              update_event:
+                value:
+                  title: Worship Night Celebration
+                  description: Join us for a night of worship, prayer, and community.
+                  time: 7:30 PM
       responses:
         '200':
           description: Event updated
@@ -664,8 +1936,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
+              examples:
+                event:
+                  value:
+                    id: 1
+                    slug: worship-night
+                    title: Worship Night Celebration
+                    date: May 15, 2025
+                    time: 7:30 PM
+                    location: Lake Forest Campus
+                    description: Join us for a night of worship, prayer, and community.
+                    image: /assets/worship-night.jpg
+                    registration_url: https://register.example.com/worship-night
+                    updated_at: 2025-04-19T10:15:00Z
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -676,37 +1967,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Event not found
 
   /event-registrations:
     post:
+      tags:
+        - Event Registrations
       summary: Register for an event
+      description: Registers a user for a specific event.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - event_id
-                - first_name
-                - last_name
-                - email
-              properties:
-                event_id:
-                  type: integer
-                first_name:
-                  type: string
-                last_name:
-                  type: string
-                email:
-                  type: string
-                phone:
-                  type: string
-                number_of_guests:
-                  type: integer
-                  default: 1
-                special_requests:
-                  type: string
+              $ref: '#/components/schemas/EventRegistrationCreate'
+            examples:
+              register:
+                value:
+                  event_id: 1
+                  first_name: John
+                  last_name: Doe
+                  email: john@example.com
+                  phone: 555-123-4567
+                  number_of_guests: 2
+                  special_requests: Need accessible seating
       responses:
         '201':
           description: Registration successful
@@ -714,9 +2002,410 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventRegistration'
+              examples:
+                registration:
+                  value:
+                    id: 1
+                    event_id: 1
+                    user_id: 1
+                    registered_at: 2025-04-18T14:13:31.880Z
+                    attended: false
+                    number_of_guests: 2
+                    special_requests: Need accessible seating
+                    event:
+                      title: Worship Night
+                      date: May 15, 2025
+                      time: 7:00 PM
+                      location: Lake Forest Campus
         '400':
           description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: event_id
+                        message: Event not found
+    get:
+      tags:
+        - Event Registrations
+      summary: Get all event registrations (admin only)
+      description: Returns a list of all event registrations with optional filtering.
+      parameters:
+        - in: query
+          name: event_id
+          schema:
+            type: integer
+            format: int64
+          description: Filter by event ID
+          example: 1
+        - in: query
+          name: user_id
+          schema:
+            type: integer
+            format: int64
+          description: Filter by user ID
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of registrations to return per page
+          example: 10
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Pagination offset
+          example: 0
+      responses:
+        '200':
+          description: List of registrations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventRegistration'
+              examples:
+                registrations:
+                  value:
+                    - id: 1
+                      event_id: 1
+                      user_id: 1
+                      registered_at: 2025-04-18T14:13:31.880Z
+                      attended: false
+                      number_of_guests: 2
+                      special_requests: Need accessible seating
+                      user:
+                        id: 1
+                        name: John Doe
+                        email: john@example.com
+                    - id: 2
+                      event_id: 1
+                      user_id: 2
+                      registered_at: 2025-04-18T15:20:45.123Z
+                      attended: false
+                      number_of_guests: 1
+                      special_requests: null
+                      user:
+                        id: 2
+                        name: Jane Doe
+                        email: jane@example.com
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: Insufficient permissions
+
+  /event-registrations/event/{event_id}:
+    get:
+      tags:
+        - Event Registrations
+      summary: Get all registrations for a specific event (admin only)
+      description: Returns a list of all registrations for a specific event.
+      parameters:
+        - in: path
+          name: event_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: Event ID
+          example: 1
+      responses:
+        '200':
+          description: List of registrations for the event
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventRegistration'
+              examples:
+                registrations:
+                  value:
+                    - id: 1
+                      event_id: 1
+                      user_id: 1
+                      registered_at: 2025-04-18T14:13:31.880Z
+                      attended: false
+                      user:
+                        id: 1
+                        name: John Doe
+                        email: john@example.com
+                        phone: 555-123-4567
+                      number_of_guests: 2
+                      special_requests: Need accessible seating
+                    - id: 2
+                      event_id: 1
+                      user_id: 2
+                      registered_at: 2025-04-18T15:20:45.123Z
+                      attended: false
+                      user:
+                        id: 2
+                        name: Jane Doe
+                        email: jane@example.com
+                        phone: null
+                      number_of_guests: 1
+                      special_requests: null
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                forbidden:
+                  value:
+                    error: Forbidden
+                    message: Insufficient permissions
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: Event not found
+
+  /event-registrations/user/{user_id}:
+    get:
+      tags:
+        - Event Registrations
+      summary: Get all registrations for a specific user
+      description: Returns a list of all registrations for a specific user.
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: User ID
+          example: 1
+      responses:
+        '200':
+          description: List of registrations for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventRegistration'
+              examples:
+                registrations:
+                  value:
+                    - id: 1
+                      event_id: 1
+                      user_id: 1
+                      registered_at: 2025-04-18T14:13:31.880Z
+                      attended: false
+                      event:
+                        id: 1
+                        title: Worship Night
+                        date: May 15, 2025
+                        time: 7:00 PM
+                        location: Lake Forest Campus
+                        image: /assets/worship-night.jpg
+                      number_of_guests: 2
+                      special_requests: Need accessible seating
+                    - id: 3
+                      event_id: 2
+                      user_id: 1
+                      registered_at: 2025-04-19T09:45:12.345Z
+                      attended: false
+                      event:
+                        id: 2
+                        title: Youth Conference 2025
+                        date: June 10-12, 2025
+                        time: 9:00 AM - 4:00 PM
+                        location: Anaheim Campus
+                        image: /assets/youth-conference.jpg
+                      number_of_guests: 3
+                      special_requests: null
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  value:
+                    error: Not Found
+                    message: User not found
+
+  /subscribe:
+    post:
+      tags:
+        - Newsletter
+      summary: Subscribe to newsletter
+      description: Subscribes an email to the newsletter with optional interests.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+            examples:
+              subscribe:
+                value:
+                  email: john@example.com
+                  first_name: John
+                  last_name: Doe
+                  interests: [general, events, groups]
+      responses:
+        '201':
+          description: Subscription successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+              examples:
+                subscription:
+                  value:
+                    message: Subscription successful
+                    subscription_id: sub_123456
+                    email: john@example.com
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: email
+                        message: Invalid email format
+        '409':
+          description: Email already subscribed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error type
+                    example: Conflict
+                  message:
+                    type: string
+                    description: Error message
+                    example: Email is already subscribed
+                  subscription_id:
+                    type: string
+                    description: Existing subscription ID
+                    example: sub_123456
+                required:
+                  - error
+                  - message
+                  - subscription_id
+              examples:
+                already_subscribed:
+                  value:
+                    error: Conflict
+                    message: Email is already subscribed
+                    subscription_id: sub_123456
+
+  /contact:
+    post:
+      tags:
+        - Contact
+      summary: Send a contact form message
+      description: Sends a contact form message to the church.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactRequest'
+            examples:
+              contact:
+                value:
+                  name: John Doe
+                  email: john@example.com
+                  phone: 555-123-4567
+                  subject: Question about worship services
+                  message: I'm new to the area and would like to know more about your worship services. What should I expect when I visit?
+                  department: General Inquiries
+      responses:
+        '201':
+          description: Contact form submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponse'
+              examples:
+                contact:
+                  value:
+                    message: Contact form submitted successfully
+                    reference_id: ref_123456
+                    expected_response_time: within 24 hours
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                validation_error:
+                  value:
+                    error: Validation Error
+                    message: Invalid request data
+                    details:
+                      - field: email
+                        message: Invalid email format
+                      - field: message
+                        message: Message is required
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error type
+                    example: Too Many Requests
+                  message:
+                    type: string
+                    description: Error message
+                    example: Please wait before submitting another contact request
+                  retry_after:
+                    type: integer
+                    description: Time to wait in seconds
+                    example: 300
+                required:
+                  - error
+                  - message
+                  - retry_after
+              examples:
+                rate_limited:
+                  value:
+                    error: Too Many Requests
+                    message: Please wait before submitting another contact request
+                    retry_after: 300

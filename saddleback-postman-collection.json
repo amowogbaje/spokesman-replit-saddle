@@ -1,0 +1,1725 @@
+{
+	"info": {
+		"_postman_id": "c5a7e55c-1d72-46d1-bbe7-c17aa5a15e7a",
+		"name": "Saddleback Church API",
+		"description": "Official API for the Saddleback Church website. This API provides access to church locations, events, messages, and user management features.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"SecureP@ssw0rd\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticates a user with username and password and returns a JWT token. This token is required for all protected endpoints."
+					},
+					"response": [
+						{
+							"name": "Authentication successful",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"SecureP@ssw0rd\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjE2MTcyODAwLCJleHAiOjE2MTYyNTkyMDB9.6UYMgRgXQNGFgJZ-9k-C3Jy6k0ZuluqUKGP0g2F8CxQ\",\n  \"expires_at\": \"2025-05-17T12:00:00Z\",\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\"\n  }\n}"
+						},
+						{
+							"name": "Authentication failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"wrongpassword\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Authentication Failed\",\n  \"message\": \"Invalid username or password\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Authentication-related endpoints"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?limit=10&offset=0&search=john",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of users to return per page"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Pagination offset"
+								},
+								{
+									"key": "search",
+									"value": "john",
+									"description": "Search term to filter users by name or email"
+								}
+							]
+						},
+						"description": "Returns a paginated list of all users. Restricted to admin users."
+					},
+					"response": [
+						{
+							"name": "List of users",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users?limit=10&offset=0&search=john",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										},
+										{
+											"key": "search",
+											"value": "john"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"username\": \"johndoe\",\n      \"email\": \"john@example.com\",\n      \"name\": \"John Doe\",\n      \"created_at\": \"2025-04-17T12:00:00Z\"\n    },\n    {\n      \"id\": 2,\n      \"username\": \"janedoe\",\n      \"email\": \"jane@example.com\",\n      \"name\": \"Jane Doe\",\n      \"created_at\": \"2025-04-16T14:30:00Z\"\n    }\n  ],\n  \"total\": 100,\n  \"limit\": 10,\n  \"offset\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"SecureP@ssw0rd\",\n  \"email\": \"john@example.com\",\n  \"name\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Creates a new user account with the provided details."
+					},
+					"response": [
+						{
+							"name": "User created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"johndoe\",\n  \"password\": \"SecureP@ssw0rd\",\n  \"email\": \"john@example.com\",\n  \"name\": \"John Doe\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"name\": \"John Doe\",\n  \"created_at\": \"2025-04-17T12:00:00Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "Returns detailed information about a specific user."
+					},
+					"response": [
+						{
+							"name": "User details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"name\": \"John Doe\",\n  \"created_at\": \"2025-04-17T12:00:00Z\",\n  \"registered_events_count\": 2,\n  \"last_login\": \"2025-04-18T09:30:00Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"name\": \"John D. Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "Updates user information such as email, name, or password."
+					},
+					"response": [
+						{
+							"name": "User updated",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"name\": \"John D. Doe\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"username\": \"johndoe\",\n  \"email\": \"john.doe@example.com\",\n  \"name\": \"John D. Doe\",\n  \"created_at\": \"2025-04-17T12:00:00Z\",\n  \"updated_at\": \"2025-04-18T12:00:00Z\"\n}"
+						}
+					]
+				}
+			],
+			"description": "User management endpoints"
+		},
+		{
+			"name": "Locations",
+			"item": [
+				{
+					"name": "List Locations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/locations?region=Orange County&limit=10&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "Orange County",
+									"description": "Filter by region"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of locations to return per page"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Pagination offset"
+								}
+							]
+						},
+						"description": "Returns a list of all church locations with their details."
+					},
+					"response": [
+						{
+							"name": "List of locations",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/locations?region=Orange County",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"locations"
+									],
+									"query": [
+										{
+											"key": "region",
+											"value": "Orange County"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"slug\": \"lake-forest\",\n    \"name\": \"Lake Forest\",\n    \"address\": \"1 Saddleback Parkway, Lake Forest, CA 92630\",\n    \"services\": \"Saturday: 4:00PM, 6:00PM\\nSunday: 9:00AM, 11:00AM\",\n    \"description\": \"Our Lake Forest campus is where it all began. Join us for worship and community.\",\n    \"image\": \"/assets/lake-forest.jpg\",\n    \"latitude\": \"33.647785\",\n    \"longitude\": \"-117.689064\",\n    \"region\": \"Orange County\"\n  },\n  {\n    \"id\": 2,\n    \"slug\": \"anaheim\",\n    \"name\": \"Anaheim\",\n    \"address\": \"131 E Katella Ave, Anaheim, CA 92802\",\n    \"services\": \"Sunday: 9:00AM, 11:00AM\",\n    \"description\": \"Located in the heart of Anaheim, our campus offers a welcoming environment for all.\",\n    \"image\": \"/assets/anaheim.jpg\",\n    \"latitude\": \"33.803219\",\n    \"longitude\": \"-117.911433\",\n    \"region\": \"Orange County\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Create Location",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slug\": \"irvine\",\n  \"name\": \"Irvine\",\n  \"address\": \"123 Main St, Irvine, CA 92618\",\n  \"services\": \"Sunday: 9:00AM, 11:00AM\",\n  \"description\": \"Our newest campus in Irvine.\",\n  \"image\": \"/assets/irvine.jpg\",\n  \"latitude\": \"33.123456\",\n  \"longitude\": \"-117.123456\",\n  \"region\": \"Orange County\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/locations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations"
+							]
+						},
+						"description": "Creates a new church location with the provided details."
+					},
+					"response": [
+						{
+							"name": "Location created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"slug\": \"irvine\",\n  \"name\": \"Irvine\",\n  \"address\": \"123 Main St, Irvine, CA 92618\",\n  \"services\": \"Sunday: 9:00AM, 11:00AM\",\n  \"description\": \"Our newest campus in Irvine.\",\n  \"image\": \"/assets/irvine.jpg\",\n  \"latitude\": \"33.123456\",\n  \"longitude\": \"-117.123456\",\n  \"region\": \"Orange County\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/locations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"locations"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 3,\n  \"slug\": \"irvine\",\n  \"name\": \"Irvine\",\n  \"address\": \"123 Main St, Irvine, CA 92618\",\n  \"services\": \"Sunday: 9:00AM, 11:00AM\",\n  \"description\": \"Our newest campus in Irvine.\",\n  \"image\": \"/assets/irvine.jpg\",\n  \"latitude\": \"33.123456\",\n  \"longitude\": \"-117.123456\",\n  \"region\": \"Orange County\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/locations/lake-forest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations",
+								"lake-forest"
+							]
+						},
+						"description": "Returns detailed information about a specific location."
+					},
+					"response": [
+						{
+							"name": "Location details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/locations/lake-forest",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"locations",
+										"lake-forest"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"slug\": \"lake-forest\",\n  \"name\": \"Lake Forest\",\n  \"address\": \"1 Saddleback Parkway, Lake Forest, CA 92630\",\n  \"services\": \"Saturday: 4:00PM, 6:00PM\\nSunday: 9:00AM, 11:00AM\",\n  \"description\": \"Our Lake Forest campus is where it all began. Join us for worship and community.\",\n  \"image\": \"/assets/lake-forest.jpg\",\n  \"latitude\": \"33.647785\",\n  \"longitude\": \"-117.689064\",\n  \"region\": \"Orange County\",\n  \"upcoming_events\": [\n    {\n      \"id\": 1,\n      \"title\": \"Worship Night\",\n      \"date\": \"May 15, 2025\",\n      \"time\": \"7:00 PM\"\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Location",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"services\": \"Saturday: 4:00PM, 6:00PM\\nSunday: 9:00AM, 11:00AM, 1:00PM\",\n  \"description\": \"Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/locations/lake-forest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"locations",
+								"lake-forest"
+							]
+						},
+						"description": "Updates information about a specific location."
+					},
+					"response": [
+						{
+							"name": "Location updated",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"services\": \"Saturday: 4:00PM, 6:00PM\\nSunday: 9:00AM, 11:00AM, 1:00PM\",\n  \"description\": \"Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/locations/lake-forest",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"locations",
+										"lake-forest"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"slug\": \"lake-forest\",\n  \"name\": \"Lake Forest\",\n  \"address\": \"1 Saddleback Parkway, Lake Forest, CA 92630\",\n  \"services\": \"Saturday: 4:00PM, 6:00PM\\nSunday: 9:00AM, 11:00AM, 1:00PM\",\n  \"description\": \"Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.\",\n  \"image\": \"/assets/lake-forest.jpg\",\n  \"latitude\": \"33.647785\",\n  \"longitude\": \"-117.689064\",\n  \"region\": \"Orange County\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for managing church locations"
+		},
+		{
+			"name": "Messages",
+			"item": [
+				{
+					"name": "List Messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/messages?speaker=Rick Warren&limit=10&offset=0&sort=date_desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"messages"
+							],
+							"query": [
+								{
+									"key": "speaker",
+									"value": "Rick Warren",
+									"description": "Filter by speaker name"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of messages to return per page"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Pagination offset"
+								},
+								{
+									"key": "sort",
+									"value": "date_desc",
+									"description": "Sort order (date_desc, date_asc)"
+								}
+							]
+						},
+						"description": "Returns a list of all messages/sermons with optional filtering."
+					},
+					"response": [
+						{
+							"name": "List of messages",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/messages?sort=date_desc&limit=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"messages"
+									],
+									"query": [
+										{
+											"key": "sort",
+											"value": "date_desc"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 2,\n    \"slug\": \"faithful-living\",\n    \"title\": \"Faith in Action: Faithful Living\",\n    \"speaker\": \"Andy Wood\",\n    \"date\": \"April 19, 2025\",\n    \"image\": \"/assets/faithful-living.jpg\",\n    \"video_url\": \"https://youtu.be/example2\",\n    \"description\": \"Learning how to put our faith into practice in everyday life.\"\n  },\n  {\n    \"id\": 1,\n    \"slug\": \"easter-message\",\n    \"title\": \"Hope Rising: Easter Message\",\n    \"speaker\": \"Rick Warren\",\n    \"date\": \"April 12, 2025\",\n    \"image\": \"/assets/easter-message.jpg\",\n    \"video_url\": \"https://youtu.be/example1\",\n    \"description\": \"A powerful Easter message about the hope we have in Christ.\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Latest Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/messages/latest",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"messages",
+								"latest"
+							]
+						},
+						"description": "Returns the most recent message/sermon."
+					},
+					"response": [
+						{
+							"name": "Latest message",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/messages/latest",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"messages",
+										"latest"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 2,\n  \"slug\": \"faithful-living\",\n  \"title\": \"Faith in Action: Faithful Living\",\n  \"speaker\": \"Andy Wood\",\n  \"date\": \"April 19, 2025\",\n  \"image\": \"/assets/faithful-living.jpg\",\n  \"video_url\": \"https://youtu.be/example2\",\n  \"description\": \"Learning how to put our faith into practice in everyday life.\",\n  \"created_at\": \"2025-04-17T10:15:00Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/messages/easter-message",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"messages",
+								"easter-message"
+							]
+						},
+						"description": "Returns detailed information about a specific message."
+					},
+					"response": [
+						{
+							"name": "Message details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/messages/easter-message",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"messages",
+										"easter-message"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"slug\": \"easter-message\",\n  \"title\": \"Hope Rising: Easter Message\",\n  \"speaker\": \"Rick Warren\",\n  \"date\": \"April 12, 2025\",\n  \"image\": \"/assets/easter-message.jpg\",\n  \"video_url\": \"https://youtu.be/example1\",\n  \"description\": \"A powerful Easter message about the hope we have in Christ.\",\n  \"created_at\": \"2025-04-10T14:30:00Z\",\n  \"related_messages\": [\n    {\n      \"id\": 2,\n      \"title\": \"Faith in Action: Faithful Living\",\n      \"speaker\": \"Andy Wood\",\n      \"date\": \"April 19, 2025\"\n    }\n  ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slug\": \"power-of-prayer\",\n  \"title\": \"The Power of Prayer\",\n  \"speaker\": \"Andy Wood\",\n  \"date\": \"April 25, 2025\",\n  \"image\": \"/assets/prayer-message.jpg\",\n  \"video_url\": \"https://youtu.be/example3\",\n  \"description\": \"Learning how prayer can transform your life.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/messages",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"messages"
+							]
+						},
+						"description": "Creates a new message/sermon with the provided details."
+					},
+					"response": [
+						{
+							"name": "Message created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"slug\": \"power-of-prayer\",\n  \"title\": \"The Power of Prayer\",\n  \"speaker\": \"Andy Wood\",\n  \"date\": \"April 25, 2025\",\n  \"image\": \"/assets/prayer-message.jpg\",\n  \"video_url\": \"https://youtu.be/example3\",\n  \"description\": \"Learning how prayer can transform your life.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/messages",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"messages"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 3,\n  \"slug\": \"power-of-prayer\",\n  \"title\": \"The Power of Prayer\",\n  \"speaker\": \"Andy Wood\",\n  \"date\": \"April 25, 2025\",\n  \"image\": \"/assets/prayer-message.jpg\",\n  \"video_url\": \"https://youtu.be/example3\",\n  \"description\": \"Learning how prayer can transform your life.\",\n  \"created_at\": \"2025-04-18T15:30:00Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Message",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Hope Rising: Easter 2025\",\n  \"description\": \"A powerful Easter message about the hope we have in Christ and what it means for our daily lives.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/messages/easter-message",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"messages",
+								"easter-message"
+							]
+						},
+						"description": "Updates information about a specific message."
+					},
+					"response": [
+						{
+							"name": "Message updated",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Hope Rising: Easter 2025\",\n  \"description\": \"A powerful Easter message about the hope we have in Christ and what it means for our daily lives.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/messages/easter-message",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"messages",
+										"easter-message"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"slug\": \"easter-message\",\n  \"title\": \"Hope Rising: Easter 2025\",\n  \"speaker\": \"Rick Warren\",\n  \"date\": \"April 12, 2025\",\n  \"image\": \"/assets/easter-message.jpg\",\n  \"video_url\": \"https://youtu.be/example1\",\n  \"description\": \"A powerful Easter message about the hope we have in Christ and what it means for our daily lives.\",\n  \"updated_at\": \"2025-04-18T16:45:00Z\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for managing church messages/sermons"
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "List Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events?date_from=2025-05-01&date_to=2025-06-30&location=Lake Forest&limit=10&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events"
+							],
+							"query": [
+								{
+									"key": "date_from",
+									"value": "2025-05-01",
+									"description": "Filter events from this date (YYYY-MM-DD)"
+								},
+								{
+									"key": "date_to",
+									"value": "2025-06-30",
+									"description": "Filter events until this date (YYYY-MM-DD)"
+								},
+								{
+									"key": "location",
+									"value": "Lake Forest",
+									"description": "Filter by location name or ID"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of events to return per page"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Pagination offset"
+								}
+							]
+						},
+						"description": "Returns a list of all events with optional filtering."
+					},
+					"response": [
+						{
+							"name": "List of events",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/events?date_from=2025-05-01&location=Lake Forest",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events"
+									],
+									"query": [
+										{
+											"key": "date_from",
+											"value": "2025-05-01"
+										},
+										{
+											"key": "location",
+											"value": "Lake Forest"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"slug\": \"worship-night\",\n    \"title\": \"Worship Night\",\n    \"date\": \"May 15, 2025\",\n    \"time\": \"7:00 PM\",\n    \"location\": \"Lake Forest Campus\",\n    \"description\": \"Join us for a night of worship and prayer.\",\n    \"image\": \"/assets/worship-night.jpg\",\n    \"registration_url\": \"https://register.example.com/worship-night\",\n    \"created_at\": \"2025-04-18T14:13:15.495Z\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/worship-night",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events",
+								"worship-night"
+							]
+						},
+						"description": "Returns detailed information about a specific event."
+					},
+					"response": [
+						{
+							"name": "Event details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/events/worship-night",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events",
+										"worship-night"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"slug\": \"worship-night\",\n  \"title\": \"Worship Night\",\n  \"date\": \"May 15, 2025\",\n  \"time\": \"7:00 PM\",\n  \"location\": \"Lake Forest Campus\",\n  \"description\": \"Join us for a night of worship and prayer.\",\n  \"image\": \"/assets/worship-night.jpg\",\n  \"registration_url\": \"https://register.example.com/worship-night\",\n  \"created_at\": \"2025-04-18T14:13:15.495Z\",\n  \"registration_count\": 42,\n  \"location_details\": {\n    \"id\": 1,\n    \"name\": \"Lake Forest\",\n    \"address\": \"1 Saddleback Parkway, Lake Forest, CA 92630\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"slug\": \"marriage-retreat\",\n  \"title\": \"Marriage Retreat\",\n  \"date\": \"June 20-22, 2025\",\n  \"time\": \"Friday 6:00 PM - Sunday 12:00 PM\",\n  \"location\": \"Lake Forest Campus\",\n  \"description\": \"A weekend retreat for married couples.\",\n  \"image\": \"/assets/marriage-retreat.jpg\",\n  \"registration_url\": \"https://register.example.com/marriage-retreat\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events"
+							]
+						},
+						"description": "Creates a new event with the provided details."
+					},
+					"response": [
+						{
+							"name": "Event created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"slug\": \"marriage-retreat\",\n  \"title\": \"Marriage Retreat\",\n  \"date\": \"June 20-22, 2025\",\n  \"time\": \"Friday 6:00 PM - Sunday 12:00 PM\",\n  \"location\": \"Lake Forest Campus\",\n  \"description\": \"A weekend retreat for married couples.\",\n  \"image\": \"/assets/marriage-retreat.jpg\",\n  \"registration_url\": \"https://register.example.com/marriage-retreat\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/events",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 3,\n  \"slug\": \"marriage-retreat\",\n  \"title\": \"Marriage Retreat\",\n  \"date\": \"June 20-22, 2025\",\n  \"time\": \"Friday 6:00 PM - Sunday 12:00 PM\",\n  \"location\": \"Lake Forest Campus\",\n  \"description\": \"A weekend retreat for married couples.\",\n  \"image\": \"/assets/marriage-retreat.jpg\",\n  \"registration_url\": \"https://register.example.com/marriage-retreat\",\n  \"created_at\": \"2025-04-19T09:30:00Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Worship Night Celebration\",\n  \"description\": \"Join us for a night of worship, prayer, and community.\",\n  \"time\": \"7:30 PM\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events/worship-night",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"events",
+								"worship-night"
+							]
+						},
+						"description": "Updates information about a specific event."
+					},
+					"response": [
+						{
+							"name": "Event updated",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"title\": \"Worship Night Celebration\",\n  \"description\": \"Join us for a night of worship, prayer, and community.\",\n  \"time\": \"7:30 PM\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/events/worship-night",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events",
+										"worship-night"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"slug\": \"worship-night\",\n  \"title\": \"Worship Night Celebration\",\n  \"date\": \"May 15, 2025\",\n  \"time\": \"7:30 PM\",\n  \"location\": \"Lake Forest Campus\",\n  \"description\": \"Join us for a night of worship, prayer, and community.\",\n  \"image\": \"/assets/worship-night.jpg\",\n  \"registration_url\": \"https://register.example.com/worship-night\",\n  \"updated_at\": \"2025-04-19T10:15:00Z\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for managing church events"
+		},
+		{
+			"name": "Event Registrations",
+			"item": [
+				{
+					"name": "Register for Event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"event_id\": 1,\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"555-123-4567\",\n  \"number_of_guests\": 2,\n  \"special_requests\": \"Need accessible seating\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/event-registrations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"event-registrations"
+							]
+						},
+						"description": "Registers a user for a specific event."
+					},
+					"response": [
+						{
+							"name": "Registration successful",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"event_id\": 1,\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"555-123-4567\",\n  \"number_of_guests\": 2,\n  \"special_requests\": \"Need accessible seating\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/event-registrations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"event-registrations"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"event_id\": 1,\n  \"user_id\": 1,\n  \"registered_at\": \"2025-04-18T14:13:31.880Z\",\n  \"attended\": false,\n  \"number_of_guests\": 2,\n  \"special_requests\": \"Need accessible seating\",\n  \"event\": {\n    \"title\": \"Worship Night\",\n    \"date\": \"May 15, 2025\",\n    \"time\": \"7:00 PM\",\n    \"location\": \"Lake Forest Campus\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "List Event Registrations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/event-registrations?event_id=1&limit=10&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"event-registrations"
+							],
+							"query": [
+								{
+									"key": "event_id",
+									"value": "1",
+									"description": "Filter by event ID"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Number of registrations to return per page"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Pagination offset"
+								}
+							]
+						},
+						"description": "Returns a list of all event registrations with optional filtering."
+					},
+					"response": [
+						{
+							"name": "List of registrations",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/event-registrations?event_id=1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"event-registrations"
+									],
+									"query": [
+										{
+											"key": "event_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"event_id\": 1,\n    \"user_id\": 1,\n    \"registered_at\": \"2025-04-18T14:13:31.880Z\",\n    \"attended\": false,\n    \"number_of_guests\": 2,\n    \"special_requests\": \"Need accessible seating\",\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\"\n    }\n  },\n  {\n    \"id\": 2,\n    \"event_id\": 1,\n    \"user_id\": 2,\n    \"registered_at\": \"2025-04-18T15:20:45.123Z\",\n    \"attended\": false,\n    \"number_of_guests\": 1,\n    \"special_requests\": null,\n    \"user\": {\n      \"id\": 2,\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\"\n    }\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "List Event Registrations by Event",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/event-registrations/event/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"event-registrations",
+								"event",
+								"1"
+							]
+						},
+						"description": "Returns a list of all registrations for a specific event."
+					},
+					"response": [
+						{
+							"name": "List of registrations for event",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/event-registrations/event/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"event-registrations",
+										"event",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"event_id\": 1,\n    \"user_id\": 1,\n    \"registered_at\": \"2025-04-18T14:13:31.880Z\",\n    \"attended\": false,\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\",\n      \"phone\": \"555-123-4567\"\n    },\n    \"number_of_guests\": 2,\n    \"special_requests\": \"Need accessible seating\"\n  },\n  {\n    \"id\": 2,\n    \"event_id\": 1,\n    \"user_id\": 2,\n    \"registered_at\": \"2025-04-18T15:20:45.123Z\",\n    \"attended\": false,\n    \"user\": {\n      \"id\": 2,\n      \"name\": \"Jane Doe\",\n      \"email\": \"jane@example.com\",\n      \"phone\": null\n    },\n    \"number_of_guests\": 1,\n    \"special_requests\": null\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "List User Registrations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/event-registrations/user/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"event-registrations",
+								"user",
+								"1"
+							]
+						},
+						"description": "Returns a list of all registrations for a specific user."
+					},
+					"response": [
+						{
+							"name": "List of registrations for user",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/event-registrations/user/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"event-registrations",
+										"user",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"event_id\": 1,\n    \"user_id\": 1,\n    \"registered_at\": \"2025-04-18T14:13:31.880Z\",\n    \"attended\": false,\n    \"event\": {\n      \"id\": 1,\n      \"title\": \"Worship Night\",\n      \"date\": \"May 15, 2025\",\n      \"time\": \"7:00 PM\",\n      \"location\": \"Lake Forest Campus\",\n      \"image\": \"/assets/worship-night.jpg\"\n    },\n    \"number_of_guests\": 2,\n    \"special_requests\": \"Need accessible seating\"\n  },\n  {\n    \"id\": 3,\n    \"event_id\": 2,\n    \"user_id\": 1,\n    \"registered_at\": \"2025-04-19T09:45:12.345Z\",\n    \"attended\": false,\n    \"event\": {\n      \"id\": 2,\n      \"title\": \"Youth Conference 2025\",\n      \"date\": \"June 10-12, 2025\",\n      \"time\": \"9:00 AM - 4:00 PM\",\n      \"location\": \"Anaheim Campus\",\n      \"image\": \"/assets/youth-conference.jpg\"\n    },\n    \"number_of_guests\": 3,\n    \"special_requests\": null\n  }\n]"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for managing event registrations"
+		},
+		{
+			"name": "Utilities",
+			"item": [
+				{
+					"name": "Subscribe to Newsletter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"interests\": [\"general\", \"events\", \"groups\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/subscribe",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"subscribe"
+							]
+						},
+						"description": "Subscribes an email to the newsletter with optional interests."
+					},
+					"response": [
+						{
+							"name": "Subscription successful",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"john@example.com\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"interests\": [\"general\", \"events\", \"groups\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/subscribe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"subscribe"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Subscription successful\",\n  \"subscription_id\": \"sub_123456\",\n  \"email\": \"john@example.com\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Send Contact Form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"555-123-4567\",\n  \"subject\": \"Question about worship services\",\n  \"message\": \"I'm new to the area and would like to know more about your worship services. What should I expect when I visit?\",\n  \"department\": \"General Inquiries\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contact"
+							]
+						},
+						"description": "Sends a contact form message to the church."
+					},
+					"response": [
+						{
+							"name": "Contact form submitted successfully",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"555-123-4567\",\n  \"subject\": \"Question about worship services\",\n  \"message\": \"I'm new to the area and would like to know more about your worship services. What should I expect when I visit?\",\n  \"department\": \"General Inquiries\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/contact",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"contact"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Contact form submitted successfully\",\n  \"reference_id\": \"ref_123456\",\n  \"expected_response_time\": \"within 24 hours\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Utility endpoints like newsletter subscription and contact form"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://api.saddleback-church.com/v1",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
