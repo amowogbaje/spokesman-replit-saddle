@@ -4,25 +4,57 @@ import { ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { Event } from "@shared/schema";
+
+/**
+ * Interface for the Event data from the external API
+ * This is completely separate from any database schema
+ */
+interface ExternalEvent {
+  id: number;
+  slug: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  image: string;
+  registration_url?: string; // Optional field
+}
+
+/**
+ * Event data structure for the UI display
+ */
+interface EventDisplay {
+  id: string;
+  title: string;
+  date: string;
+  month: string;
+  day: string;
+  time: string;
+  image: string;
+  link: string;
+}
 
 export default function UpcomingEvents() {
+  // Fetch events from the external API
   const { 
-    data: events, 
+    data: externalEvents, 
     isLoading, 
     error 
-  } = useQuery<Event[]>({
+  } = useQuery<ExternalEvent[]>({
     queryKey: ['/api/events'],
   });
 
   // Process date strings to get month and day
-  const processedEvents = React.useMemo(() => {
-    if (!events || events.length === 0) {
-      return UPCOMING_EVENTS; // Fallback to constants
+  const processedEvents = React.useMemo<EventDisplay[]>(() => {
+    // If no events from API or there's an error, use fallback data
+    if (!externalEvents || externalEvents.length === 0) {
+      return UPCOMING_EVENTS; // Fallback to constants for demo/dev
     }
 
-    return events.map(event => {
-      // Try to parse the date string
+    // Process external API data into our display format
+    return externalEvents.map(event => {
+      // Parse date string to get month and day
       let month = '';
       let day = '';
       
@@ -47,6 +79,7 @@ export default function UpcomingEvents() {
         day = parts[1] || '';
       }
 
+      // Transform external API data to our display format
       return {
         id: event.id.toString(),
         title: event.title,
@@ -55,10 +88,10 @@ export default function UpcomingEvents() {
         day,
         time: event.time,
         image: event.image,
-        link: event.registrationUrl || `/events/${event.slug}`
+        link: event.registration_url || `/events/${event.slug}`
       };
     });
-  }, [events]);
+  }, [externalEvents]);
 
   return (
     <section className="container mx-auto px-4 my-16">
@@ -69,7 +102,7 @@ export default function UpcomingEvents() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {isLoading ? (
-          // Loading skeleton
+          // Loading skeleton while waiting for API response
           Array(4).fill(0).map((_, index) => (
             <div key={index} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 animate-pulse">
               <div className="w-full h-40 bg-gray-200"></div>
@@ -86,10 +119,13 @@ export default function UpcomingEvents() {
             </div>
           ))
         ) : error ? (
+          // Error state when API request fails
           <div className="col-span-4 text-center text-red-500">
-            Error loading events. Please try again later.
+            Error loading events from API. Please try again later.
+            <p className="text-sm mt-2">API Error: {(error as Error).message}</p>
           </div>
         ) : (
+          // Render events from API response
           processedEvents.map((event) => (
             <div key={event.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
               <img 

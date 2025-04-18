@@ -1,0 +1,1137 @@
+{
+  "base_url": "https://api.saddleback-church.com/v1",
+  "authentication": {
+    "type": "Bearer Token",
+    "description": "All endpoints require authentication except where noted",
+    "header": "Authorization: Bearer {token}"
+  },
+  "endpoints": [
+    {
+      "path": "/users",
+      "methods": {
+        "GET": {
+          "description": "List all users (admin only)",
+          "query_parameters": {
+            "limit": "Number of users to return per page",
+            "offset": "Pagination offset",
+            "search": "Search term to filter users by name or email"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/users?limit=10&offset=0' -H 'Authorization: Bearer {token}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "users": [
+                {
+                  "id": 1,
+                  "username": "johndoe",
+                  "email": "john@example.com",
+                  "name": "John Doe",
+                  "created_at": "2025-04-17T12:00:00Z"
+                },
+                {
+                  "id": 2,
+                  "username": "janedoe",
+                  "email": "jane@example.com",
+                  "name": "Jane Doe",
+                  "created_at": "2025-04-16T14:30:00Z"
+                }
+              ],
+              "total": 100,
+              "limit": 10,
+              "offset": 0
+            }
+          },
+          "error_responses": [
+            {
+              "status": 401,
+              "body": {
+                "error": "Unauthorized",
+                "message": "Authentication required"
+              }
+            },
+            {
+              "status": 403,
+              "body": {
+                "error": "Forbidden",
+                "message": "Insufficient permissions"
+              }
+            }
+          ]
+        },
+        "POST": {
+          "description": "Create a new user account",
+          "request_body": {
+            "username": "johndoe",
+            "password": "SecureP@ssw0rd",
+            "email": "john@example.com",
+            "name": "John Doe"
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/users' -H 'Content-Type: application/json' -d '{\"username\":\"johndoe\",\"password\":\"SecureP@ssw0rd\",\"email\":\"john@example.com\",\"name\":\"John Doe\"}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "id": 1,
+              "username": "johndoe",
+              "email": "john@example.com",
+              "name": "John Doe",
+              "created_at": "2025-04-17T12:00:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "username",
+                    "message": "Username already exists"
+                  },
+                  {
+                    "field": "password",
+                    "message": "Password must be at least 8 characters"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/users/{id}",
+      "methods": {
+        "GET": {
+          "description": "Get user details by ID",
+          "url_parameters": {
+            "id": "User ID"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/users/1' -H 'Authorization: Bearer {token}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "username": "johndoe",
+              "email": "john@example.com",
+              "name": "John Doe",
+              "created_at": "2025-04-17T12:00:00Z",
+              "registered_events_count": 2,
+              "last_login": "2025-04-18T09:30:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "User not found"
+              }
+            }
+          ]
+        },
+        "PATCH": {
+          "description": "Update user details",
+          "url_parameters": {
+            "id": "User ID"
+          },
+          "request_body": {
+            "email": "john.doe@example.com",
+            "name": "John D. Doe",
+            "password": "NewSecureP@ssw0rd"
+          },
+          "request_example": {
+            "curl": "curl -X PATCH 'https://api.saddleback-church.com/v1/users/1' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"email\":\"john.doe@example.com\",\"name\":\"John D. Doe\"}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "username": "johndoe",
+              "email": "john.doe@example.com",
+              "name": "John D. Doe",
+              "created_at": "2025-04-17T12:00:00Z",
+              "updated_at": "2025-04-18T12:00:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "email",
+                    "message": "Invalid email format"
+                  }
+                ]
+              }
+            },
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "User not found"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/auth/login",
+      "methods": {
+        "POST": {
+          "description": "Authenticate a user and get access token",
+          "authentication": false,
+          "request_body": {
+            "username": "johndoe",
+            "password": "SecureP@ssw0rd"
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/auth/login' -H 'Content-Type: application/json' -d '{\"username\":\"johndoe\",\"password\":\"SecureP@ssw0rd\"}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjE2MTcyODAwLCJleHAiOjE2MTYyNTkyMDB9.6UYMgRgXQNGFgJZ-9k-C3Jy6k0ZuluqUKGP0g2F8CxQ",
+              "expires_at": "2025-05-17T12:00:00Z",
+              "user": {
+                "id": 1,
+                "username": "johndoe",
+                "email": "john@example.com",
+                "name": "John Doe"
+              }
+            }
+          },
+          "error_responses": [
+            {
+              "status": 401,
+              "body": {
+                "error": "Authentication Failed",
+                "message": "Invalid username or password"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/locations",
+      "methods": {
+        "GET": {
+          "description": "List all church locations",
+          "authentication": false,
+          "query_parameters": {
+            "region": "Filter by region",
+            "limit": "Number of locations to return per page",
+            "offset": "Pagination offset"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/locations?region=Orange%20County'"
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 1,
+                "slug": "lake-forest",
+                "name": "Lake Forest",
+                "address": "1 Saddleback Parkway, Lake Forest, CA 92630",
+                "services": "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM",
+                "description": "Our Lake Forest campus is where it all began. Join us for worship and community.",
+                "image": "/assets/lake-forest.jpg",
+                "latitude": "33.647785",
+                "longitude": "-117.689064",
+                "region": "Orange County"
+              },
+              {
+                "id": 2,
+                "slug": "anaheim",
+                "name": "Anaheim",
+                "address": "131 E Katella Ave, Anaheim, CA 92802",
+                "services": "Sunday: 9:00AM, 11:00AM",
+                "description": "Located in the heart of Anaheim, our campus offers a welcoming environment for all.",
+                "image": "/assets/anaheim.jpg",
+                "latitude": "33.803219",
+                "longitude": "-117.911433",
+                "region": "Orange County"
+              }
+            ]
+          }
+        },
+        "POST": {
+          "description": "Create a new location (admin only)",
+          "request_body": {
+            "slug": "irvine",
+            "name": "Irvine",
+            "address": "123 Main St, Irvine, CA 92618",
+            "services": "Sunday: 9:00AM, 11:00AM",
+            "description": "Our newest campus in Irvine.",
+            "image": "/assets/irvine.jpg",
+            "latitude": "33.123456",
+            "longitude": "-117.123456",
+            "region": "Orange County"
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/locations' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"slug\":\"irvine\",\"name\":\"Irvine\",\"address\":\"123 Main St, Irvine, CA 92618\",\"services\":\"Sunday: 9:00AM, 11:00AM\",\"description\":\"Our newest campus in Irvine.\",\"image\":\"/assets/irvine.jpg\",\"latitude\":\"33.123456\",\"longitude\":\"-117.123456\",\"region\":\"Orange County\"}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "id": 3,
+              "slug": "irvine",
+              "name": "Irvine",
+              "address": "123 Main St, Irvine, CA 92618",
+              "services": "Sunday: 9:00AM, 11:00AM",
+              "description": "Our newest campus in Irvine.",
+              "image": "/assets/irvine.jpg",
+              "latitude": "33.123456",
+              "longitude": "-117.123456",
+              "region": "Orange County"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "slug",
+                    "message": "Location slug already exists"
+                  }
+                ]
+              }
+            },
+            {
+              "status": 403,
+              "body": {
+                "error": "Forbidden",
+                "message": "Insufficient permissions"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/locations/{id_or_slug}",
+      "methods": {
+        "GET": {
+          "description": "Get location details by ID or slug",
+          "authentication": false,
+          "url_parameters": {
+            "id_or_slug": "Location ID or slug"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/locations/lake-forest'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "slug": "lake-forest",
+              "name": "Lake Forest",
+              "address": "1 Saddleback Parkway, Lake Forest, CA 92630",
+              "services": "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM",
+              "description": "Our Lake Forest campus is where it all began. Join us for worship and community.",
+              "image": "/assets/lake-forest.jpg",
+              "latitude": "33.647785",
+              "longitude": "-117.689064",
+              "region": "Orange County",
+              "upcoming_events": [
+                {
+                  "id": 1,
+                  "title": "Worship Night",
+                  "date": "May 15, 2025",
+                  "time": "7:00 PM"
+                }
+              ]
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Location not found"
+              }
+            }
+          ]
+        },
+        "PATCH": {
+          "description": "Update location details (admin only)",
+          "url_parameters": {
+            "id_or_slug": "Location ID or slug"
+          },
+          "request_body": {
+            "services": "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM, 1:00PM",
+            "description": "Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space."
+          },
+          "request_example": {
+            "curl": "curl -X PATCH 'https://api.saddleback-church.com/v1/locations/lake-forest' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"services\":\"Saturday: 4:00PM, 6:00PM\\nSunday: 9:00AM, 11:00AM, 1:00PM\"}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "slug": "lake-forest",
+              "name": "Lake Forest",
+              "address": "1 Saddleback Parkway, Lake Forest, CA 92630",
+              "services": "Saturday: 4:00PM, 6:00PM\nSunday: 9:00AM, 11:00AM, 1:00PM",
+              "description": "Our Lake Forest campus is where it all began. Join us for worship and community in our newly renovated space.",
+              "image": "/assets/lake-forest.jpg",
+              "latitude": "33.647785",
+              "longitude": "-117.689064",
+              "region": "Orange County"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Location not found"
+              }
+            },
+            {
+              "status": 403,
+              "body": {
+                "error": "Forbidden",
+                "message": "Insufficient permissions"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/messages",
+      "methods": {
+        "GET": {
+          "description": "List all messages/sermons",
+          "authentication": false,
+          "query_parameters": {
+            "speaker": "Filter by speaker name",
+            "limit": "Number of messages to return per page",
+            "offset": "Pagination offset",
+            "sort": "Sort order (date_desc, date_asc)"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/messages?sort=date_desc&limit=10'"
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 2,
+                "slug": "faithful-living",
+                "title": "Faith in Action: Faithful Living",
+                "speaker": "Andy Wood",
+                "date": "April 19, 2025",
+                "image": "/assets/faithful-living.jpg",
+                "video_url": "https://youtu.be/example2",
+                "description": "Learning how to put our faith into practice in everyday life."
+              },
+              {
+                "id": 1,
+                "slug": "easter-message",
+                "title": "Hope Rising: Easter Message",
+                "speaker": "Rick Warren",
+                "date": "April 12, 2025",
+                "image": "/assets/easter-message.jpg",
+                "video_url": "https://youtu.be/example1",
+                "description": "A powerful Easter message about the hope we have in Christ."
+              }
+            ]
+          }
+        },
+        "POST": {
+          "description": "Create a new message (admin only)",
+          "request_body": {
+            "slug": "power-of-prayer",
+            "title": "The Power of Prayer",
+            "speaker": "Andy Wood",
+            "date": "April 25, 2025",
+            "image": "/assets/prayer-message.jpg",
+            "video_url": "https://youtu.be/example3",
+            "description": "Learning how prayer can transform your life."
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/messages' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"slug\":\"power-of-prayer\",\"title\":\"The Power of Prayer\",\"speaker\":\"Andy Wood\",\"date\":\"April 25, 2025\",\"image\":\"/assets/prayer-message.jpg\",\"video_url\":\"https://youtu.be/example3\",\"description\":\"Learning how prayer can transform your life.\"}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "id": 3,
+              "slug": "power-of-prayer",
+              "title": "The Power of Prayer",
+              "speaker": "Andy Wood",
+              "date": "April 25, 2025",
+              "image": "/assets/prayer-message.jpg",
+              "video_url": "https://youtu.be/example3",
+              "description": "Learning how prayer can transform your life.",
+              "created_at": "2025-04-18T15:30:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "slug",
+                    "message": "Message slug already exists"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/messages/{id_or_slug}",
+      "methods": {
+        "GET": {
+          "description": "Get message details by ID or slug",
+          "authentication": false,
+          "url_parameters": {
+            "id_or_slug": "Message ID or slug"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/messages/easter-message'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "slug": "easter-message",
+              "title": "Hope Rising: Easter Message",
+              "speaker": "Rick Warren",
+              "date": "April 12, 2025",
+              "image": "/assets/easter-message.jpg",
+              "video_url": "https://youtu.be/example1",
+              "description": "A powerful Easter message about the hope we have in Christ.",
+              "created_at": "2025-04-10T14:30:00Z",
+              "related_messages": [
+                {
+                  "id": 2,
+                  "title": "Faith in Action: Faithful Living",
+                  "speaker": "Andy Wood",
+                  "date": "April 19, 2025"
+                }
+              ]
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Message not found"
+              }
+            }
+          ]
+        },
+        "PATCH": {
+          "description": "Update message details (admin only)",
+          "url_parameters": {
+            "id_or_slug": "Message ID or slug"
+          },
+          "request_body": {
+            "title": "Hope Rising: Easter 2025",
+            "description": "A powerful Easter message about the hope we have in Christ and what it means for our daily lives."
+          },
+          "request_example": {
+            "curl": "curl -X PATCH 'https://api.saddleback-church.com/v1/messages/easter-message' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"title\":\"Hope Rising: Easter 2025\",\"description\":\"A powerful Easter message about the hope we have in Christ and what it means for our daily lives.\"}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "slug": "easter-message",
+              "title": "Hope Rising: Easter 2025",
+              "speaker": "Rick Warren",
+              "date": "April 12, 2025",
+              "image": "/assets/easter-message.jpg",
+              "video_url": "https://youtu.be/example1",
+              "description": "A powerful Easter message about the hope we have in Christ and what it means for our daily lives.",
+              "updated_at": "2025-04-18T16:45:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Message not found"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/messages/latest",
+      "methods": {
+        "GET": {
+          "description": "Get the latest message",
+          "authentication": false,
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/messages/latest'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 2,
+              "slug": "faithful-living",
+              "title": "Faith in Action: Faithful Living",
+              "speaker": "Andy Wood",
+              "date": "April 19, 2025",
+              "image": "/assets/faithful-living.jpg",
+              "video_url": "https://youtu.be/example2",
+              "description": "Learning how to put our faith into practice in everyday life.",
+              "created_at": "2025-04-17T10:15:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "No messages found"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/events",
+      "methods": {
+        "GET": {
+          "description": "List all events",
+          "authentication": false,
+          "query_parameters": {
+            "date_from": "Filter events from this date (YYYY-MM-DD)",
+            "date_to": "Filter events until this date (YYYY-MM-DD)",
+            "location": "Filter by location name or ID",
+            "limit": "Number of events to return per page",
+            "offset": "Pagination offset"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/events?date_from=2025-05-01&location=Lake%20Forest'"
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 1,
+                "slug": "worship-night",
+                "title": "Worship Night",
+                "date": "May 15, 2025",
+                "time": "7:00 PM",
+                "location": "Lake Forest Campus",
+                "description": "Join us for a night of worship and prayer.",
+                "image": "/assets/worship-night.jpg",
+                "registration_url": "https://register.example.com/worship-night",
+                "created_at": "2025-04-18T14:13:15.495Z"
+              },
+              {
+                "id": 2,
+                "slug": "youth-conference",
+                "title": "Youth Conference 2025",
+                "date": "June 10-12, 2025",
+                "time": "9:00 AM - 4:00 PM",
+                "location": "Anaheim Campus",
+                "description": "A three-day conference for high school students to grow in their faith.",
+                "image": "/assets/youth-conference.jpg",
+                "registration_url": "https://register.example.com/youth-conference",
+                "created_at": "2025-04-18T14:13:27.574Z"
+              }
+            ]
+          }
+        },
+        "POST": {
+          "description": "Create a new event (admin only)",
+          "request_body": {
+            "slug": "marriage-retreat",
+            "title": "Marriage Retreat",
+            "date": "June 20-22, 2025",
+            "time": "Friday 6:00 PM - Sunday 12:00 PM",
+            "location": "Lake Forest Campus",
+            "description": "A weekend retreat for married couples.",
+            "image": "/assets/marriage-retreat.jpg",
+            "registration_url": "https://register.example.com/marriage-retreat"
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/events' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"slug\":\"marriage-retreat\",\"title\":\"Marriage Retreat\",\"date\":\"June 20-22, 2025\",\"time\":\"Friday 6:00 PM - Sunday 12:00 PM\",\"location\":\"Lake Forest Campus\",\"description\":\"A weekend retreat for married couples.\",\"image\":\"/assets/marriage-retreat.jpg\",\"registration_url\":\"https://register.example.com/marriage-retreat\"}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "id": 3,
+              "slug": "marriage-retreat",
+              "title": "Marriage Retreat",
+              "date": "June 20-22, 2025",
+              "time": "Friday 6:00 PM - Sunday 12:00 PM",
+              "location": "Lake Forest Campus",
+              "description": "A weekend retreat for married couples.",
+              "image": "/assets/marriage-retreat.jpg",
+              "registration_url": "https://register.example.com/marriage-retreat",
+              "created_at": "2025-04-19T09:30:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "slug",
+                    "message": "Event slug already exists"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/events/{id_or_slug}",
+      "methods": {
+        "GET": {
+          "description": "Get event details by ID or slug",
+          "authentication": false,
+          "url_parameters": {
+            "id_or_slug": "Event ID or slug"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/events/worship-night'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "slug": "worship-night",
+              "title": "Worship Night",
+              "date": "May 15, 2025",
+              "time": "7:00 PM",
+              "location": "Lake Forest Campus",
+              "description": "Join us for a night of worship and prayer.",
+              "image": "/assets/worship-night.jpg",
+              "registration_url": "https://register.example.com/worship-night",
+              "created_at": "2025-04-18T14:13:15.495Z",
+              "registration_count": 42,
+              "location_details": {
+                "id": 1,
+                "name": "Lake Forest",
+                "address": "1 Saddleback Parkway, Lake Forest, CA 92630"
+              }
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Event not found"
+              }
+            }
+          ]
+        },
+        "PATCH": {
+          "description": "Update event details (admin only)",
+          "url_parameters": {
+            "id_or_slug": "Event ID or slug"
+          },
+          "request_body": {
+            "title": "Worship Night Celebration",
+            "description": "Join us for a night of worship, prayer, and community.",
+            "time": "7:30 PM"
+          },
+          "request_example": {
+            "curl": "curl -X PATCH 'https://api.saddleback-church.com/v1/events/worship-night' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"title\":\"Worship Night Celebration\",\"description\":\"Join us for a night of worship, prayer, and community.\",\"time\":\"7:30 PM\"}'"
+          },
+          "response": {
+            "status": 200,
+            "body": {
+              "id": 1,
+              "slug": "worship-night",
+              "title": "Worship Night Celebration",
+              "date": "May 15, 2025",
+              "time": "7:30 PM",
+              "location": "Lake Forest Campus",
+              "description": "Join us for a night of worship, prayer, and community.",
+              "image": "/assets/worship-night.jpg",
+              "registration_url": "https://register.example.com/worship-night",
+              "updated_at": "2025-04-19T10:15:00Z"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Event not found"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/event-registrations",
+      "methods": {
+        "POST": {
+          "description": "Register for an event",
+          "request_body": {
+            "event_id": 1,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "john@example.com",
+            "phone": "555-123-4567",
+            "number_of_guests": 2,
+            "special_requests": "Need accessible seating"
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/event-registrations' -H 'Content-Type: application/json' -H 'Authorization: Bearer {token}' -d '{\"event_id\":1,\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"john@example.com\",\"phone\":\"555-123-4567\",\"number_of_guests\":2,\"special_requests\":\"Need accessible seating\"}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "id": 1,
+              "event_id": 1,
+              "user_id": 1,
+              "registered_at": "2025-04-18T14:13:31.880Z",
+              "attended": false,
+              "number_of_guests": 2,
+              "special_requests": "Need accessible seating",
+              "event": {
+                "title": "Worship Night",
+                "date": "May 15, 2025",
+                "time": "7:00 PM",
+                "location": "Lake Forest Campus"
+              }
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "event_id",
+                    "message": "Event not found"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "GET": {
+          "description": "Get all event registrations (admin only)",
+          "query_parameters": {
+            "event_id": "Filter by event ID",
+            "user_id": "Filter by user ID",
+            "limit": "Number of registrations to return per page",
+            "offset": "Pagination offset"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/event-registrations?event_id=1' -H 'Authorization: Bearer {token}'"
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 1,
+                "event_id": 1,
+                "user_id": 1,
+                "registered_at": "2025-04-18T14:13:31.880Z",
+                "attended": false,
+                "number_of_guests": 2,
+                "special_requests": "Need accessible seating",
+                "user": {
+                  "id": 1,
+                  "name": "John Doe",
+                  "email": "john@example.com"
+                }
+              },
+              {
+                "id": 2,
+                "event_id": 1,
+                "user_id": 2,
+                "registered_at": "2025-04-18T15:20:45.123Z",
+                "attended": false,
+                "number_of_guests": 1,
+                "special_requests": null,
+                "user": {
+                  "id": 2,
+                  "name": "Jane Doe",
+                  "email": "jane@example.com"
+                }
+              }
+            ]
+          },
+          "error_responses": [
+            {
+              "status": 403,
+              "body": {
+                "error": "Forbidden",
+                "message": "Insufficient permissions"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/event-registrations/event/{event_id}",
+      "methods": {
+        "GET": {
+          "description": "Get all registrations for a specific event (admin only)",
+          "url_parameters": {
+            "event_id": "Event ID"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/event-registrations/event/1' -H 'Authorization: Bearer {token}'"
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 1,
+                "event_id": 1,
+                "user_id": 1,
+                "registered_at": "2025-04-18T14:13:31.880Z",
+                "attended": false,
+                "user": {
+                  "id": 1,
+                  "name": "John Doe",
+                  "email": "john@example.com",
+                  "phone": "555-123-4567"
+                },
+                "number_of_guests": 2,
+                "special_requests": "Need accessible seating"
+              },
+              {
+                "id": 2,
+                "event_id": 1,
+                "user_id": 2,
+                "registered_at": "2025-04-18T15:20:45.123Z",
+                "attended": false,
+                "user": {
+                  "id": 2,
+                  "name": "Jane Doe",
+                  "email": "jane@example.com",
+                  "phone": null
+                },
+                "number_of_guests": 1,
+                "special_requests": null
+              }
+            ]
+          },
+          "error_responses": [
+            {
+              "status": 403,
+              "body": {
+                "error": "Forbidden",
+                "message": "Insufficient permissions"
+              }
+            },
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "Event not found"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/event-registrations/user/{user_id}",
+      "methods": {
+        "GET": {
+          "description": "Get all registrations for a specific user",
+          "url_parameters": {
+            "user_id": "User ID"
+          },
+          "request_example": {
+            "curl": "curl -X GET 'https://api.saddleback-church.com/v1/event-registrations/user/1' -H 'Authorization: Bearer {token}'"
+          },
+          "response": {
+            "status": 200,
+            "body": [
+              {
+                "id": 1,
+                "event_id": 1,
+                "user_id": 1,
+                "registered_at": "2025-04-18T14:13:31.880Z",
+                "attended": false,
+                "event": {
+                  "id": 1,
+                  "title": "Worship Night",
+                  "date": "May 15, 2025",
+                  "time": "7:00 PM",
+                  "location": "Lake Forest Campus",
+                  "image": "/assets/worship-night.jpg"
+                },
+                "number_of_guests": 2,
+                "special_requests": "Need accessible seating"
+              },
+              {
+                "id": 3,
+                "event_id": 2,
+                "user_id": 1,
+                "registered_at": "2025-04-19T09:45:12.345Z",
+                "attended": false,
+                "event": {
+                  "id": 2,
+                  "title": "Youth Conference 2025",
+                  "date": "June 10-12, 2025",
+                  "time": "9:00 AM - 4:00 PM",
+                  "location": "Anaheim Campus",
+                  "image": "/assets/youth-conference.jpg"
+                },
+                "number_of_guests": 3,
+                "special_requests": null
+              }
+            ]
+          },
+          "error_responses": [
+            {
+              "status": 404,
+              "body": {
+                "error": "Not Found",
+                "message": "User not found"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/subscribe",
+      "methods": {
+        "POST": {
+          "description": "Subscribe to newsletter",
+          "authentication": false,
+          "request_body": {
+            "email": "john@example.com",
+            "first_name": "John",
+            "last_name": "Doe",
+            "interests": ["general", "events", "groups"]
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/subscribe' -H 'Content-Type: application/json' -d '{\"email\":\"john@example.com\",\"first_name\":\"John\",\"last_name\":\"Doe\",\"interests\":[\"general\",\"events\",\"groups\"]}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "message": "Subscription successful",
+              "subscription_id": "sub_123456",
+              "email": "john@example.com"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "email",
+                    "message": "Invalid email format"
+                  }
+                ]
+              }
+            },
+            {
+              "status": 409,
+              "body": {
+                "error": "Conflict",
+                "message": "Email is already subscribed",
+                "subscription_id": "sub_123456"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "path": "/contact",
+      "methods": {
+        "POST": {
+          "description": "Send a contact form message",
+          "authentication": false,
+          "request_body": {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "phone": "555-123-4567",
+            "subject": "Question about worship services",
+            "message": "I'm new to the area and would like to know more about your worship services. What should I expect when I visit?",
+            "department": "General Inquiries"
+          },
+          "request_example": {
+            "curl": "curl -X POST 'https://api.saddleback-church.com/v1/contact' -H 'Content-Type: application/json' -d '{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"phone\":\"555-123-4567\",\"subject\":\"Question about worship services\",\"message\":\"I\\'m new to the area and would like to know more about your worship services. What should I expect when I visit?\",\"department\":\"General Inquiries\"}'"
+          },
+          "response": {
+            "status": 201,
+            "body": {
+              "message": "Contact form submitted successfully",
+              "reference_id": "ref_123456",
+              "expected_response_time": "within 24 hours"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "error": "Validation Error",
+                "message": "Invalid request data",
+                "details": [
+                  {
+                    "field": "email",
+                    "message": "Invalid email format"
+                  },
+                  {
+                    "field": "message",
+                    "message": "Message is required"
+                  }
+                ]
+              }
+            },
+            {
+              "status": 429,
+              "body": {
+                "error": "Too Many Requests",
+                "message": "Please wait before submitting another contact request",
+                "retry_after": 300
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
