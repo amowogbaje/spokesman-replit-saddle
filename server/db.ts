@@ -122,7 +122,7 @@ export const api = {
   // Authentication
   auth: {
     login: (username: string, password: string) => 
-      apiRequest('/auth/login', 'POST', { username, password }),
+      apiRequest('/login', 'POST', { username, password }),
   },
   
   // Utilities
