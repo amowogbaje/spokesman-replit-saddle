@@ -7,7 +7,7 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
  */
 const API_CONFIG = {
   // In a real app, this would come from environment variables
-  BASE_URL: 'https://api.saddleback-church.com/v1',
+  BASE_URL: 'https://spokesman-admin-third.test/api',
   DEFAULT_HEADERS: {
     'Accept': 'application/json',
   },

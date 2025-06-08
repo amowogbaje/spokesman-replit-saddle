@@ -11,7 +11,7 @@ export default function InfoCards() {
           {INFO_CARDS.map((card) => (
             <div 
               key={card.id} 
-              className={`rounded-xl overflow-hidden ${!card.image ? card.color : ''} shadow-md h-full`}
+              className={`rounded-xl overflow-hidden ${!card.image ? card.color : ''} shadow-md h-96`}
             >
               {card.image ? (
                 <div className="relative h-full">
@@ -20,8 +20,8 @@ export default function InfoCards() {
                     style={{ backgroundImage: `url('${card.image}')` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/60" />
-                  <div className="relative px-8 py-10 h-full flex flex-col justify-between z-10">
-                    {card.title && <h3 className="text-xl font-bold text-white mb-2">{card.title}</h3>}
+                  <div className="relative px-8 py-10 h-full flex flex-col justify-end font-medium z-10">
+                    {card.title && <h3 className="text-xl text-white mb-2">{card.title}</h3>}
                     <div>
                       <p className="text-lg text-white font-light mb-6">{card.content}</p>
                       <Link href={card.link}>
@@ -33,7 +33,7 @@ export default function InfoCards() {
                   </div>
                 </div>
               ) : (
-                <div className="px-8 py-10 h-full flex flex-col justify-between">
+                <div className="px-8 py-10 h-full flex flex-col justify-end">
                   {card.title && <h3 className="text-xl font-bold mb-2">{card.title}</h3>}
                   <div>
                     <p className="text-lg font-light mb-6">{card.content}</p>

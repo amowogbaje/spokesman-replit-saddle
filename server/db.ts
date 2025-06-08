@@ -9,7 +9,7 @@ import fetch from 'node-fetch';
 // Configure API connection
 const API_CONFIG = {
   // Base URL for the external API
-  BASE_URL: process.env.EXTERNAL_API_URL || 'https://api.saddleback-church.com/v1',
+  BASE_URL: process.env.EXTERNAL_API_URL || 'https://spokesman-admin-third.test/api',
   
   // Optional API key for authenticated requests
   API_KEY: process.env.EXTERNAL_API_KEY || '',

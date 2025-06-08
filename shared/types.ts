@@ -4,7 +4,7 @@ export type Message = {
   speaker: string;
   date: string;
   image: string;
-  videoUrl?: string;
+  video_url?: string;
   description?: string;
 };
 

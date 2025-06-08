@@ -13,13 +13,13 @@ import { Message } from "@shared/schema";
 
 export default function Home() {
   useEffect(() => {
-    document.title = "Saddleback Church - Home";
+    document.title = "Sanctuary of Hope Church - Home";
   }, []);
 
-  const { 
-    data: latestMessage, 
-    isLoading: messageLoading, 
-    error: messageError 
+  const {
+    data: latestMessage,
+    isLoading: messageLoading,
+    error: messageError
   } = useQuery<Message>({
     queryKey: ['/api/latest-message'],
   });
@@ -47,33 +47,62 @@ export default function Home() {
                     </div>
                   </div>
                 ) : latestMessage ? (
-                  <div 
-                    className="relative overflow-hidden rounded-xl aspect-[16/9] bg-cover bg-center shadow-lg" 
-                    style={{ 
-                      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${latestMessage.image || "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"}')`
-                    }}
+                  <div
+                    className="relative overflow-hidden rounded-xl aspect-[16/9] bg-black shadow-lg"
                   >
-                    <div className="absolute inset-0 flex items-center justify-start p-6 md:p-10">
-                      <div className="text-white">
-                        <p className="uppercase tracking-wider text-xs font-bold mb-1">LATEST MESSAGE</p>
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">{latestMessage.title}</h1>
+                    {latestMessage.video_url ? (
+                      <iframe
+                        className="absolute top-0 left-0 w-full h-full"
+                        src={`https://www.youtube.com/embed/${latestMessage.video_url.split('v=')[1]}?autoplay=1&mute=1&controls=0&loop=1&playlist=${latestMessage.video_url.split('v=')[1]}`}
+                        title="Latest Message Video"
+                        frameBorder="0"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <div
+                        className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
+                        style={{
+                          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${latestMessage.image || "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"}')`,
+                        }}
+                      />
+                    )}
+
+                    <div className="absolute inset-0 flex items-end justify-start p-6 md:p-10 z-10">
+                      <div className="text-white font-bold">
+                        <p className="uppercase tracking-wider text-xs mb-1">LATEST MESSAGE</p>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl mb-2">{latestMessage.title}</h1>
                         <p className="mb-6 text-sm md:text-base">{latestMessage.speaker} | {latestMessage.date}</p>
-                        
-                        <a 
-                          href={latestMessage.videoUrl || "#"} 
-                          target="_blank" 
+
+                        <a
+                          href={latestMessage.video_url || "#"}
+                          target="_blank"
                           rel="noopener noreferrer"
-                          className="bg-white hover:bg-gray-100 text-gray-900 rounded-full px-6 py-2 flex items-center shadow-md inline-block"
+                          className="inline-flex items-center bg-white hover:bg-gray-100 text-gray-900 rounded-full px-5 py-2 shadow-md font-semibold ring-2 ring-blue-400 ring-offset-2 hover:ring-blue-500 hover:shadow-blue-300"
                         >
                           <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
                           </svg>
                           Watch Now
                         </a>
+
+
                       </div>
                     </div>
+
                   </div>
+
                 ) : (
                   <div className="relative overflow-hidden rounded-xl aspect-[16/9] bg-gray-100 shadow-lg">
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -82,17 +111,17 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              
+
               {/* Quick Actions */}
               <QuickActions />
             </div>
           </div>
         </section>
-        
+
         <InfoCards />
         <Locations />
         <Activate />
-        <AppDownload />
+        {/* <AppDownload /> */}
         <UpcomingEvents />
       </main>
       <Footer />

@@ -37,8 +37,8 @@ export type Event = {
 
 export const ACTION_ITEMS: ActionItem[] = [
   {
-    id: "new-to-saddleback",
-    title: "New to Saddleback?",
+    id: "new-to-spokesman",
+    title: "New to Spokesman?",
     icon: "church",
     color: "bg-blue-500",
     link: "/welcome",
@@ -75,18 +75,19 @@ export const ACTION_ITEMS: ActionItem[] = [
 
 export const INFO_CARDS: CardItem[] = [
   {
-    id: "easter",
-    content: "Enjoy an encouraging message, live music, and safe & fun programming for your kids!",
-    link: "/events/easter/2025",
+    id: "ilcon",
+    // title: "Discretion Series",
+    content: "Are you a Leader? Do you want to add effectiveness to your leadership? Jump on this!",
+    link: "https://ilcon.spokesmancom.org",
     linkText: "Learn More",
-    image: "https://images.unsplash.com/photo-1588435305889-10ab5ef0e3c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+    image: "/ilcon2025.jpg"
   },
   {
-    id: "dream",
-    content: "It's time to dream! Learn how you can be a part of our multi-year vision initiative.",
-    link: "/initiatives/dream-now",
+    id: "socialmedia",
+    content: "There is a need for the Church to represent God on the social media, Do you have ideas?",
+    link: "/social-media",
     linkText: "Learn More",
-    color: "bg-yellow-400"
+    image: "/social-media.png"
   }
 ];
 
