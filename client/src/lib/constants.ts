@@ -1,4 +1,4 @@
-export const SITE_NAME = "Saddleback Church";
+export const SITE_NAME = "SSOH Church";
 
 export type ActionItem = {
   id: string;
@@ -91,6 +91,8 @@ export const INFO_CARDS: CardItem[] = [
   }
 ];
 
+
+export const API_BASE_URL = "https://spokesman-admin-third.test/api"
 export const LOCATIONS: Location[] = [
   {
     id: "north-america",

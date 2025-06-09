@@ -6,14 +6,14 @@ import { Link } from "wouter";
 
 export default function AboutPage() {
   useEffect(() => {
-    document.title = "Saddleback Church - About";
+    document.title = "SSOH Church - About";
   }, []);
 
   const aboutSections = [
     {
       id: "our-story",
       title: "Our Story",
-      content: "Saddleback Church was founded in 1980 by Rick and Kay Warren in Lake Forest, California. Starting with just one family, the church has grown to become a global ministry with multiple locations around the world. Throughout our history, we've remained committed to helping people discover their purpose and develop their God-given potential.",
+      content: "SSOH Church was founded in 1980 by Rick and Kay Warren in Lake Forest, California. Starting with just one family, the church has grown to become a global ministry with multiple locations around the world. Throughout our history, we've remained committed to helping people discover their purpose and develop their God-given potential.",
       image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
     },
     {
@@ -25,7 +25,7 @@ export default function AboutPage() {
     {
       id: "our-leadership",
       title: "Our Leadership",
-      content: "Saddleback is led by Pastor Andy Wood, who serves as Senior Pastor along with a team of dedicated pastors and staff who oversee various ministries. Our leadership is committed to serving the congregation and community with integrity, compassion, and vision.",
+      content: "SSOH is led by Pastor Andy Wood, who serves as Senior Pastor along with a team of dedicated pastors and staff who oversee various ministries. Our leadership is committed to serving the congregation and community with integrity, compassion, and vision.",
       image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
     },
     {
@@ -43,7 +43,7 @@ export default function AboutPage() {
         <section className="bg-blue-500 text-white py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl font-bold mb-4">About Saddleback Church</h1>
+              <h1 className="text-4xl font-bold mb-4">About SSOH Church</h1>
               <p className="text-xl">
                 We're a global family helping people live a Christ-centered life.
               </p>

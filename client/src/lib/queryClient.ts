@@ -54,7 +54,7 @@ async function throwIfResNotOk(res: Response) {
 }
 
 /**
- * Makes requests to the external Saddleback Church API
+ * Makes requests to the external SSOH Church API
  */
 export async function apiRequest(
   method: string,
@@ -140,7 +140,7 @@ export const getQueryFn: <T>(options: {
   };
 
 /**
- * The configured QueryClient for connecting to the external Saddleback Church API
+ * The configured QueryClient for connecting to the external SSOH Church API
  */
 export const queryClient = new QueryClient({
   defaultOptions: {

@@ -36,6 +36,7 @@ export const messages = pgTable("messages", {
   date: text("date").notNull(),
   image: text("image").notNull(),
   video_url: text("video_url"),
+  duration: text("duration"),
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

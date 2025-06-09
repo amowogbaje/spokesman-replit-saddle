@@ -14,29 +14,29 @@ export default function Activate() {
         </p>
       </div>
       
-      <div className="flex justify-center">
+      {/* <div className="flex justify-center">
         <Link href="/sections/get-involved/adults/activate">
           <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-8 py-6">
             Learn More
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
-      </div>
+      </div> */}
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <img 
-            src="https://images.unsplash.com/photo-1523803326055-13445def5fee?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+            src="/growth.jpeg" 
             alt="Growth" 
             className="w-full h-48 object-cover rounded-lg mb-4"
           />
-          <h3 className="font-bold text-xl mb-2">Grow</h3>
+          <h3 className="font-bold text-xl mb-2">Foundation Classes</h3>
           <p>Deepen your relationship with Jesus through classes, groups, and resources designed to help you grow spiritually.</p>
         </div>
         
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <img 
-            src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+            src="/connect.jpg" 
             alt="Connect" 
             className="w-full h-48 object-cover rounded-lg mb-4"
           />
@@ -46,12 +46,12 @@ export default function Activate() {
         
         <div className="bg-white rounded-xl p-6 shadow-sm">
           <img 
-            src="https://images.unsplash.com/photo-1551739440-5dd934d3a94a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
-            alt="Serve" 
+            src="/mentorship.jpg" 
+            alt="Mentorship" 
             className="w-full h-48 object-cover rounded-lg mb-4"
           />
-          <h3 className="font-bold text-xl mb-2">Serve</h3>
-          <p>Discover the joy of making a difference by using your unique gifts to serve others in the church and community.</p>
+          <h3 className="font-bold text-xl mb-2">Mentorship</h3>
+          <p>Grow through intentional relationships with experienced mentors who will guide, support, and encourage you in your spiritual and personal journey.</p>
         </div>
       </div>
     </section>

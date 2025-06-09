@@ -4,9 +4,9 @@ export const locations: CampusLocation[] = [
   {
     id: "lake-forest",
     name: "Lake Forest",
-    address: "1 Saddleback Pkwy, Lake Forest, CA 92630",
+    address: "1 SSOH Pkwy, Lake Forest, CA 92630",
     services: "Saturday 4:00pm & 6:30pm, Sunday 9:00am & 11:30am",
-    description: "Our main campus where Saddleback Church began, offering a full range of ministries for all ages.",
+    description: "Our main campus where SSOH Church began, offering a full range of ministries for all ages.",
     image: "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     latitude: 33.6471,
     longitude: -117.6778,

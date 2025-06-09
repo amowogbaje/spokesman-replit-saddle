@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 /**
  * External API Client
- * This module provides functions to interact with the external Saddleback Church API
+ * This module provides functions to interact with the external SSOH Church API
  * No database connections are used - all data is retrieved from the external API
  */
 

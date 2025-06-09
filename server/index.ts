@@ -3,9 +3,9 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 /**
- * Saddleback Church Web Application
+ * SSOH Church Web Application
  * 
- * This application serves as a frontend to the Saddleback Church external API.
+ * This application serves as a frontend to the SSOH Church external API.
  * Instead of using a direct database connection, all data is retrieved from
  * the external API endpoints defined in the API documentation.
  * 

@@ -7,7 +7,7 @@ export default function AppDownload() {
     <section className="container mx-auto px-4 my-16 max-w-4xl">
       <div className="flex flex-col md:flex-row items-center bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
         <div className="md:w-1/2 p-8">
-          <h3 className="text-2xl font-bold mb-3">The Saddleback App</h3>
+          <h3 className="text-2xl font-bold mb-3">The SSOH App</h3>
           <p className="text-lg mb-6">
             Get everything you need for your weekend experience and 
             discover new ways to grow spiritually throughout the week.

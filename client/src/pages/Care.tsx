@@ -8,7 +8,7 @@ import { Heart, Users, Phone, Clock } from "lucide-react";
 
 export default function CarePage() {
   useEffect(() => {
-    document.title = "Saddleback Church - Care";
+    document.title = "SSOH Church - Care";
   }, []);
 
   const careServices = [

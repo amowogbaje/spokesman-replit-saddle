@@ -37,12 +37,12 @@ interface EventDisplay {
 
 export default function UpcomingEvents() {
   // Fetch events from the external API
-  const { 
-    data: externalEvents, 
-    isLoading, 
-    error 
+  const {
+    data: externalEvents,
+    isLoading,
+    error
   } = useQuery<ExternalEvent[]>({
-    queryKey: ['/api/events'],
+    queryKey: ['/api/events/upcoming'],
   });
 
   // Process date strings to get month and day
@@ -57,7 +57,7 @@ export default function UpcomingEvents() {
       // Parse date string to get month and day
       let month = '';
       let day = '';
-      
+
       try {
         // Most date formats should work with this
         const dateObj = new Date(event.date);
@@ -99,7 +99,7 @@ export default function UpcomingEvents() {
         <h2 className="text-3xl font-bold mb-2">Upcoming Events</h2>
         <p className="text-lg text-gray-500">Join us for these special events and gatherings</p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {isLoading ? (
           // Loading skeleton while waiting for API response
@@ -128,9 +128,9 @@ export default function UpcomingEvents() {
           // Render events from API response
           processedEvents.map((event) => (
             <div key={event.id} className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-              <img 
-                src={event.image} 
-                alt={event.title} 
+              <img
+                src={event.image}
+                alt={event.title}
                 className="w-full h-40 object-cover"
               />
               <div className="p-4">
@@ -144,15 +144,29 @@ export default function UpcomingEvents() {
                     <p className="text-sm text-gray-500">{event.time}</p>
                   </div>
                 </div>
-                <Link href={event.link}>
-                  <span className="text-blue-500 text-sm font-medium cursor-pointer">Learn More</span>
-                </Link>
+                {event.link.startsWith('http') ? (
+                  <a
+                    href={event.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 text-sm font-medium"
+                  >
+                    Learn More
+                  </a>
+                ) : (
+                  <Link href={event.link}>
+                    <span className="text-blue-500 text-sm font-medium cursor-pointer">
+                      Learn More
+                    </span>
+                  </Link>
+                )}
+
               </div>
             </div>
           ))
         )}
       </div>
-      
+
       <div className="text-center mt-8">
         <Link href="/events">
           <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6 py-6">

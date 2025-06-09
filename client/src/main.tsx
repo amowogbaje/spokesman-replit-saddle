@@ -3,10 +3,10 @@ import App from "./App";
 import "./index.css";
 
 // Add meta tags for SEO
-document.title = "Saddleback Church - Helping people live a Christ-centered life";
+document.title = "SSOH Church - We are dealers in Hope";
 const metaDescription = document.createElement('meta');
 metaDescription.name = 'description';
-metaDescription.content = 'Saddleback Church is a global family dedicated to helping people live a Christ-centered life. Join us in-person or online for encouraging messages and community.';
+metaDescription.content = 'SSOH Church is a global family dedicated to helping people live a Christ-centered life. Join us in-person or online for encouraging messages and community.';
 document.head.appendChild(metaDescription);
 
 // Add favicon

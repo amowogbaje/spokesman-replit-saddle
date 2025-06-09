@@ -4,12 +4,13 @@ import { Menu } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { AppIcon } from "./ui/app-icon";
 
 const navItems = [
   { title: "Locations", link: "/locations" },
   { title: "Watch", link: "/watch" },
   { title: "About", link: "/about" },
-  { title: "Care", link: "/care" },
+  // { title: "Care", link: "/care" },
   { title: "Give", link: "/give" },
 ];
 
@@ -22,11 +23,8 @@ export default function Header() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <svg width="36" height="36" viewBox="0 0 36 36" className="text-blue-500" fill="currentColor">
-              <path d="M18 0C8.059 0 0 8.059 0 18s8.059 18 18 18 18-8.059 18-18S27.941 0 18 0zm0 33c-8.284 0-15-6.716-15-15 0-8.284 6.716-15 15-15 8.284 0 15 6.716 15 15 0 8.284-6.716 15-15 15z"/>
-              <path d="M18 6c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12S24.627 6 18 6zm-6 12c0-3.314 2.686-6 6-6s6 2.686 6 6-2.686 6-6 6-6-2.686-6-6z"/>
-            </svg>
-            <span className="ml-2 text-base font-semibold tracking-wide">SADDLEBACK CHURCH</span>
+            <AppIcon />
+            <span className="ml-2 text-base font-semibold tracking-wide">SSOH CHURCH</span>
           </Link>
           
           {/* Desktop Navigation */}

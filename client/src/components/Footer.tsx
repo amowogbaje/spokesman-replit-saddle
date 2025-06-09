@@ -7,6 +7,7 @@ import {
   Youtube, 
   Twitter 
 } from "lucide-react";
+import { AppIcon } from "./ui/app-icon";
 
 export default function Footer() {
   return (
@@ -16,22 +17,22 @@ export default function Footer() {
           <div>
             <div className="flex items-center mb-4">
               <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                <Waves className="h-5 w-5 text-white" />
+                <AppIcon />
               </div>
-              <span className="ml-2 text-lg font-bold uppercase tracking-wider">SADDLEBACK</span>
+              <span className="ml-2 text-lg font-bold uppercase tracking-wider">SSOH</span>
             </div>
-            <p className="text-gray-500 mb-4">Helping people live a Christ-centered life.</p>
+            <p className="text-gray-500 mb-4">Out of the Broken pieces of your past, God will build an edifice of Hope.</p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
+              <a href="https://web.facebook.com/sanctuaryofhopechurch?_rdc=1&_rdr" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="https://instagram.com" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/sanctuaryofhopechurch" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://youtube.com" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.youtube.com/@SanctuaryofHopeChurch" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
                 <Youtube className="h-5 w-5" />
               </a>
-              <a href="https://twitter.com" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
+              <a href="http://twitter.com/spokesmancom" className="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
@@ -85,7 +86,7 @@ export default function Footer() {
         
         <div className="border-t border-gray-300 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500 mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Saddleback Church. All Rights Reserved.
+            &copy; {new Date().getFullYear()} SSOH Church. All Rights Reserved.
           </p>
           <div className="flex flex-wrap justify-center space-x-6">
             <Link href="/privacy">
