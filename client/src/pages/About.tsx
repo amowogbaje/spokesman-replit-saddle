@@ -6,100 +6,132 @@ import { Link } from "wouter";
 
 export default function AboutPage() {
   useEffect(() => {
-    document.title = "SSOH Church - About";
+    document.title = "Spokesman Communication Ministries – About";
   }, []);
 
   const aboutSections = [
     {
-      id: "our-story",
-      title: "Our Story",
-      content: "SSOH Church was founded in 1980 by Rick and Kay Warren in Lake Forest, California. Starting with just one family, the church has grown to become a global ministry with multiple locations around the world. Throughout our history, we've remained committed to helping people discover their purpose and develop their God-given potential.",
-      image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+      id: "history",
+      title: "Our History",
+      content: `What began in 1986 as a simple house fellowship under Prof. G.E. Erahbor’s leadership has grown into Spokesman Communication Ministries—a multi-divisional global ministry. From that first gathering at “House 17, Doctor’s Quarters” through divine commission moments, this ministry has stood firm through trials, setbacks, and even arson attempts, always rising as a beacon of hope.`,
+      image: "/house11.jpg",
+      link: "https://www.youtube.com/watch?v=emQiBmtfljA&t=10s",
+      linkLabel: "Watch History on Youtube"
     },
     {
-      id: "our-beliefs",
-      title: "Our Beliefs",
-      content: "We believe in the authority of Scripture, the Trinity, salvation by grace through faith in Jesus Christ, the church as the body of Christ, and the Great Commission to make disciples of all nations. Our values are centered on worship, fellowship, discipleship, ministry, and evangelism.",
-      image: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+      id: "mission",
+      title: "Our Mission",
+      content: `We are called to communicate divine truth and bring hope to our generation. Committed to excellence in all things spiritual and practical, we pursue worship, fellowship, discipleship, ministry, and evangelism so every person can discover and fulfill their God-given purpose.`,
+      image: "/hope_auditorium.JPG",
     },
     {
-      id: "our-leadership",
+      id: "vision",
+      title: "Our Vision",
+      content: `To see our generation transformed by the message of hope. We will raise up God-centered men and women who bring biblical principles and excellence to every sphere—building strong Christian institutions that impact the world for Christ.`,
+      image: "/connect.jpg"
+    },
+    {
+      id: "values",
+      title: "Our Core Values",
+      content: `Integrity, accountability, transparency, and excellence guide everything we do. We believe leadership principles are universal: character over competence, unity over division, and love as the distinguishing mark of Christ’s body.`,
+      image: "/core_values.png",
+      link: "https://www.instagram.com/p/C_6B7k-srby/",
+      linkLabel: "See what members say"
+    },
+    {
+      id: "leadership",
       title: "Our Leadership",
-      content: "SSOH is led by Pastor Andy Wood, who serves as Senior Pastor along with a team of dedicated pastors and staff who oversee various ministries. Our leadership is committed to serving the congregation and community with integrity, compassion, and vision.",
-      image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
+      content: `Led by Prof. G.E. Erahbor—a physician, lecturer, and visionary—and his wife, Rev. Mrs. Folakemi Erahbor, a passionate teacher and co-laborer in ministry, SSOH is guided by a dedicated pastoral team. Together, they steward this trans-local ministry with integrity, compassion, and a clear divine mandate to “be God’s spokesman to our generation.”`,
+      image: "/leadership.jpg",
     },
     {
-      id: "our-purpose",
-      title: "Our Purpose",
-      content: "Our purpose is to help people live a Christ-centered life. We do this through our purpose-driven approach that focuses on worship, fellowship, discipleship, ministry, and evangelism. We believe every person has a God-given purpose and we're committed to helping them discover and fulfill it.",
-      image: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-    }
+      id: "dream-church",
+      title: "Our Dream Church",
+      content: `A multi-cultural, multi-generational family where every culture and class feels at home; a church charged with worship, prayer, and the Holy Spirit; where each member contributes and celebrates gifts toward our shared mission of winning and building souls.`,
+      image: "/dream-church.jpg",
+    },
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+
       <main className="flex-grow">
-        <section className="bg-blue-500 text-white py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl font-bold mb-4">About SSOH Church</h1>
-              <p className="text-xl">
-                We're a global family helping people live a Christ-centered life.
-              </p>
-            </div>
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-5xl font-bold mb-4">About Spokesman Communication Ministries</h1>
+            <p className="text-xl max-w-2xl mx-auto">
+              Communicating divine truth and bringing hope since 1986, we exist to equip leaders and transform lives globally.
+            </p>
           </div>
         </section>
 
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            {aboutSections.map((section, index) => (
-              <div 
-                key={section.id} 
-                className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} 
-                  gap-8 items-center mb-16 last:mb-0`}
+        {/* Content Sections */}
+        <section className="py-16">
+          <div className="container mx-auto px-4 space-y-24">
+            {aboutSections.map((section, idx) => (
+              <div
+                key={section.id}
+                className={`flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-8`}
               >
                 <div className="md:w-1/2">
-                  <img 
-                    src={section.image} 
-                    alt={section.title} 
-                    className="rounded-xl w-full h-auto object-cover"
+                  <img
+                    src={section.image}
+                    alt={section.title}
+                    className="rounded-xl w-full h-auto object-cover shadow-lg"
                   />
                 </div>
                 <div className="md:w-1/2">
                   <h2 className="text-3xl font-bold mb-4">{section.title}</h2>
-                  <p className="text-lg mb-4 text-gray-600">{section.content}</p>
-                  <Link href={`/about/${section.id.toLowerCase().replace(/\s+/g, '-')}`}>
-                    <span className="text-blue-500 font-medium cursor-pointer">Learn more</span>
-                  </Link>
+                  <p className="text-lg text-gray-700 mb-4">{section.content}</p>
+                  {section.link && (
+                    section.link.startsWith("http") ? (
+                      <a
+                        href={section.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white font-medium hover:underline cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full shadow"
+                      >
+                        {section.linkLabel || "Learn more"}
+                      </a>
+                    ) : (
+                      <Link href={section.link}>
+                        <span className="text-white font-medium hover:underline cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full shadow">
+                          {section.linkLabel || "Learn more"}
+                        </span>
+                      </Link>
+                    )
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="py-12 bg-gray-50">
+        {/* Call to Action */}
+        <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-8">Come Visit Us</h2>
-            <p className="text-lg mb-6 max-w-3xl mx-auto">
-              We'd love to meet you in person. Join us at one of our weekend services 
-              or connect with us online.
+            <h2 className="text-3xl font-bold mb-6">Get Involved</h2>
+            <p className="text-lg mb-8 max-w-2xl mx-auto">
+              Whether through our School of Effective Ministry & Leadership, media outreaches like “Hour of Change,” or our local Sanctuary of Hope church family, there’s a place for you here.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex justify-center gap-6">
               <Link href="/locations">
-                <span className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-full cursor-pointer">
+                <span className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-full shadow">
                   Find a Location
                 </span>
               </Link>
-              <Link href="/watch/live">
-                <span className="bg-white hover:bg-gray-100 text-blue-500 font-medium py-3 px-6 rounded-full border border-blue-500 cursor-pointer">
-                  Watch Online
+              {/* <Link href="/ministries">
+                <span className="bg-white hover:bg-gray-100 text-blue-600 font-medium px-6 py-3 rounded-full border border-blue-600 shadow">
+                  Explore Ministries
                 </span>
-              </Link>
+              </Link> */}
             </div>
           </div>
         </section>
       </main>
+
       <Footer />
     </div>
   );

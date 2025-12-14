@@ -18,7 +18,7 @@ export default function QuickActions() {
           const IconComponent = iconMap[item.icon as keyof typeof iconMap];
           
           return (
-            <Link key={item.id} href={item.link}>
+            <Link key={item.id} href={`${item.link}#${item.id}`}>
               <div className="action-button bg-white rounded-xl my-4 py-3 px-4 shadow-md border border-gray-100 flex items-center gap-4 hover:shadow-lg transition-all cursor-pointer">
                 <div className={`h-12 w-12 rounded-full ${item.color} flex items-center justify-center flex-shrink-0`}>
                   {IconComponent && <IconComponent className="h-6 w-6 text-white" />}

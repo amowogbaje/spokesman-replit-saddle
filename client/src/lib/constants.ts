@@ -48,28 +48,28 @@ export const ACTION_ITEMS: ActionItem[] = [
     title: "I want to follow Jesus.",
     icon: "heart",
     color: "bg-red-500", 
-    link: "/faith",
+    link: "/welcome",
   },
   {
     id: "get-baptized",
     title: "I want to get baptized.",
     icon: "droplet", 
     color: "bg-blue-400",
-    link: "/baptism",
+    link: "/welcome",
   },
   {
     id: "find-community",
     title: "I want to find community.",
     icon: "users",
     color: "bg-green-500",
-    link: "/groups",
+    link: "/welcome",
   },
   {
     id: "start-volunteering",
     title: "I want to start volunteering.",
     icon: "helping-hand", 
     color: "bg-purple-500",
-    link: "/volunteer",
+    link: "/welcome",
   }
 ];
 
@@ -85,14 +85,15 @@ export const INFO_CARDS: CardItem[] = [
   {
     id: "socialmedia",
     content: "There is a need for the Church to represent God on the social media, Do you have ideas?",
-    link: "/social-media",
+    link: "/welcome#start-volunteering",
     linkText: "Learn More",
     image: "/social-media.png"
   }
 ];
 
 
-export const API_BASE_URL = "https://spokesman-admin-third.test/api"
+// export const API_BASE_URL = "https://spokesman-admin-third.test/api"
+export const API_BASE_URL = "https://admin.spokesmancom.org/api"
 export const LOCATIONS: Location[] = [
   {
     id: "north-america",
@@ -173,7 +174,7 @@ export const FOOTER_LINKS = {
     { title: "Give", link: "/give" }
   ],
   resources: [
-    { title: "Messages", link: "/messages" },
+    { title: "Messages", link: "/watch" },
     { title: "Daily Devotional", link: "/devotionals" },
     { title: "Mobile App", link: "/app" },
     { title: "Calendar", link: "/events" }

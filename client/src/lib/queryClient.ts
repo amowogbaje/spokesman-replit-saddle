@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { API_BASE_URL } from "./constants";
 
 /**
  * External API Configuration
@@ -7,7 +8,7 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
  */
 const API_CONFIG = {
   // In a real app, this would come from environment variables
-  BASE_URL: 'https://spokesman-admin-third.test/api',
+  BASE_URL: API_BASE_URL,
   DEFAULT_HEADERS: {
     'Accept': 'application/json',
   },

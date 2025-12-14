@@ -24,9 +24,9 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <AppIcon />
-            <span className="ml-2 text-base font-semibold tracking-wide">SSOH CHURCH</span>
+            <span className="ml-2 text-base font-semibold tracking-wide">Spokesman Sanctuary of Hope Church</span>
           </Link>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
@@ -39,18 +39,18 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-          
+
           {/* Auth Buttons */}
           <div className="flex items-center space-x-4">
-            <Link href="/dashboard" className="hidden md:block">
+            {/* <Link href="/dashboard" className="hidden md:block">
               <Button variant="outline" size="sm" className="rounded-full border-gray-300 hover:bg-gray-50 hover:text-blue-600 px-5">
                 My Dashboard
               </Button>
             </Link>
             <Link href="/signin" className="text-blue-500 text-sm font-medium">
               Sign In
-            </Link>
-            
+            </Link> */}
+
             {/* Mobile Menu Button */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -70,7 +70,7 @@ export default function Header() {
                       {item.title}
                     </Link>
                   ))}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
+                  {/* <div className="mt-4 pt-4 border-t border-gray-100">
                     <Link
                       href="/dashboard"
                       onClick={() => setIsOpen(false)}
@@ -78,7 +78,7 @@ export default function Header() {
                     >
                       My Dashboard
                     </Link>
-                  </div>
+                  </div> */}
                 </div>
               </SheetContent>
             </Sheet>

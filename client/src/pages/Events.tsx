@@ -7,6 +7,7 @@ import { Link, useParams } from "wouter";
 import { Calendar, Clock, MapPin, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Event } from "@shared/schema";
+import { API_BASE_URL } from "@/lib/constants";
 
 
 export default function EventsPage() {
@@ -30,6 +31,12 @@ export default function EventsPage() {
   } = useQuery<Event | null>({
     enabled: Boolean(eventSlug),
     queryKey: ["/events", eventSlug],
+    queryFn: () =>
+      fetch(`${API_BASE_URL}/events/${eventSlug}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
   });
 
   // Set document title dynamically
@@ -106,56 +113,64 @@ export default function EventsPage() {
                       `Join us for a special ${event.title} service at SSOH Church. This event is open to everyone and will feature inspiring messages, worship, and community connection.`}
                   </p>
 
-                  <h2>Event Details</h2>
                   <p>
                     Don't miss this opportunity to gather with your church family for our{" "}
                     {event.title}. We'll have special activities, music, and a powerful message that will
                     encourage and inspire you.
                   </p>
 
-                  <h2>What to Expect</h2>
-                  <ul>
-                    <li>Uplifting worship experience</li>
-                    <li>Relevant and encouraging message</li>
-                    <li>Safe and fun children's program (birth through 5th grade)</li>
-                    <li>Connection with others in your community</li>
-                  </ul>
 
                   <p>We can't wait to see you there! This event is free and open to everyone.</p>
                 </div>
               </div>
 
               <div className="lg:col-span-1">
-                <Card className="mb-6">
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-4">Register for this Event</h3>
-                    <p className="mb-4 text-gray-600">
-                      Let us know you're coming so we can prepare for your visit.
-                    </p>
-                    <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white mb-2">
-                      Register Now
-                    </Button>
-                    <p className="text-sm text-gray-500 text-center">
-                      Registration is optional but appreciated
-                    </p>
-                  </CardContent>
-                </Card>
-
                 <Card>
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold mb-4">Share This Event</h3>
                     <div className="flex justify-between">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          window.open(
+                            shareUrls.facebook(window.location.href),
+                            "_blank",
+                            "noopener,noreferrer"
+                          )
+                        }
+                      >
                         Facebook
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          window.open(
+                            shareUrls.twitter(window.location.href, event.title),
+                            "_blank",
+                            "noopener,noreferrer"
+                          )
+                        }
+                      >
                         Twitter
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          window.open(
+                            shareUrls.email(window.location.href, `Check out this event: ${event.title}`),
+                            "_blank",
+                            "noopener,noreferrer"
+                          )
+                        }
+                      >
                         Email
                       </Button>
                     </div>
                   </CardContent>
+
                 </Card>
               </div>
             </div>
@@ -166,29 +181,61 @@ export default function EventsPage() {
                 {displayedEvents
                   .filter(e => e.slug !== event.slug)
                   .slice(0, 4)
-                  .map(otherEvent => (
-                    <Link key={otherEvent.slug} href={otherEvent.link}>
-                      <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                        <div
-                          className="h-40 bg-cover bg-center"
-                          style={{ backgroundImage: `url('${otherEvent.image}')` }}
-                        />
-                        <CardContent className="p-4">
-                          <div className="flex items-start">
-                            <div className="bg-gray-50 rounded p-2 mr-3 text-center">
-                              <span className="block text-sm font-bold">{otherEvent.month}</span>
-                              <span className="block text-xl font-bold">{otherEvent.day}</span>
-                            </div>
-                            <div>
-                              <h3 className="font-bold">{otherEvent.title}</h3>
-                              <p className="text-sm text-gray-500">{otherEvent.time}</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  ))}
+                  .map(otherEvent => {
+                    if (otherEvent.registration_url) {
+                      return (
+                        <a
+                          key={otherEvent.slug}
+                          href={otherEvent.registration_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block"
+                        >
+                          <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+                            <div
+                              className="h-40 bg-cover bg-center"
+                              style={{ backgroundImage: `url('${otherEvent.image}')` }}
+                            />
+                            <CardContent className="p-4">
+                              <div className="flex items-start">
+                                <div className="bg-gray-50 rounded p-2 mr-3 text-center">
+                                  <span className="block text-sm font-bold">{otherEvent.date}</span>
+                                </div>
+                                <div>
+                                  <h3 className="font-bold">{otherEvent.title}</h3>
+                                  <p className="text-sm text-gray-500">{otherEvent.time}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </a>
+                      );
+                    } else {
+                      return (
+                        <Link key={otherEvent.slug} href={`/event/${otherEvent.slug}`}>
+                          <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+                            <div
+                              className="h-40 bg-cover bg-center"
+                              style={{ backgroundImage: `url('${otherEvent.image}')` }}
+                            />
+                            <CardContent className="p-4">
+                              <div className="flex items-start">
+                                <div className="bg-gray-50 rounded p-2 mr-3 text-center">
+                                  <span className="block text-sm font-bold">{otherEvent.date}</span>
+                                </div>
+                                <div>
+                                  <h3 className="font-bold">{otherEvent.title}</h3>
+                                  <p className="text-sm text-gray-500">{otherEvent.time}</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      );
+                    }
+                  })}
               </div>
+
             </div>
           </div>
         </main>
@@ -219,28 +266,62 @@ export default function EventsPage() {
           {eventsError && <p className="text-red-600">Failed to load events.</p>}
           {!eventsLoading && !eventsError && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {displayedEvents.map(event => (
-                <Link key={event.slug} href={event.link}>
-                  <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                    <div
-                      className="h-40 bg-cover bg-center"
-                      style={{ backgroundImage: `url('${event.image}')` }}
-                    />
-                    <CardContent className="p-4">
-                      <div className="flex items-start">
-                        <div className="bg-gray-50 rounded p-2 mr-3 text-center">
-                          <span className="block text-sm font-bold">{event.month}</span>
-                          <span className="block text-xl font-bold">{event.day}</span>
-                        </div>
-                        <div>
-                          <h3 className="font-bold">{event.title}</h3>
-                          <p className="text-sm text-gray-500">{event.time}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+              {displayedEvents.map(event => {
+                if (event.registration_url) {
+                  return (
+                    <a
+                      key={event.slug}
+                      href={event.registration_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+                        {/* Card content here */}
+                        <div
+                          className="h-40 bg-cover bg-center"
+                          style={{ backgroundImage: `url('${event.image}')` }}
+                        />
+                        <CardContent className="p-4">
+                          <div className="flex items-start">
+                            <div className="bg-gray-50 rounded p-2 mr-3 text-center">
+                              <span className="block text-sm font-bold">{event.date}</span>
+                            </div>
+                            <div>
+                              <h3 className="font-bold">{event.title}</h3>
+                              <p className="text-sm text-gray-500">{event.time}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </a>
+                  );
+                } else {
+                  return (
+                    <Link key={event.slug} href={`/events/${event.slug}`}>
+                      <Card className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
+                        {/* Card content here */}
+                        <div
+                          className="h-40 bg-cover bg-center"
+                          style={{ backgroundImage: `url('${event.image}')` }}
+                        />
+                        <CardContent className="p-4">
+                          <div className="flex items-start">
+                            <div className="bg-gray-50 rounded p-2 mr-3 text-center">
+                              <span className="block text-sm font-bold">{event.date}</span>
+                            </div>
+                            <div>
+                              <h3 className="font-bold">{event.title}</h3>
+                              <p className="text-sm text-gray-500">{event.time}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                }
+              })}
+
             </div>
           )}
         </section>

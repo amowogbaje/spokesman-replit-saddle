@@ -11,6 +11,7 @@ import About from "@/pages/About";
 import Care from "@/pages/Care";
 import Give from "@/pages/Give";
 import Events from "@/pages/Events";
+import Welcome from "@/pages/Welcome";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/" component={Home}/>
       <Route path="/locations" component={Locations}/>
       <Route path="/watch" component={Watch}/>
+      <Route path="/welcome" component={Welcome}/>
       <Route path="/about" component={About}/>
       <Route path="/care" component={Care}/>
       <Route path="/give" component={Give}/>
